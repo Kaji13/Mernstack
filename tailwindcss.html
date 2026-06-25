@@ -1,0 +1,179 @@
+<script src="https://cdn.tailwindcss.com"></script<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Clinic Management System</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 font-sans">
+
+  <!-- Header -->
+  <header class="bg-blue-900 text-white text-center py-5">
+    <h1 class="text-3xl font-bold">Clinic Management System</h1>
+  </header>
+
+  <!-- Nav -->
+  <nav class="bg-blue-950 text-center py-3">
+    <a href="#" class="text-white no-underline mx-4 hover:underline">Home</a>
+    <a href="#" class="text-white no-underline mx-4 hover:underline">About</a>
+    <a href="#" class="text-white no-underline mx-4 hover:underline">Services</a>
+    <a href="#" class="text-white no-underline mx-4 hover:underline">Doctors</a>
+    <a href="#" class="text-white no-underline mx-4 hover:underline">Contact</a>
+  </nav>
+
+  <!-- Hero -->
+  <section class="bg-white text-center py-16 px-5">
+    <h2 class="text-2xl font-semibold mb-2">Welcome to Our Clinic</h2>
+    <p class="text-gray-600">Your Health Is Our Priority</p>
+    <button class="mt-4 px-5 py-2 bg-blue-900 text-white rounded hover:bg-blue-800 transition">
+      Book Appointment
+    </button>
+  </section>
+
+  <!-- About -->
+  <section class="py-10 px-5">
+    <h2 class="text-2xl font-semibold text-center mb-5">About Us</h2>
+    <p class="text-center text-gray-700 max-w-xl mx-auto">
+      We provide quality healthcare services with experienced doctors and modern facilities.
+    </p>
+  </section>
+
+  <!-- Services -->
+  <section class="py-10 px-5">
+    <h2 class="text-2xl font-semibold text-center mb-5">Our Services</h2>
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 max-w-5xl mx-auto">
+      <div class="bg-white rounded-lg p-5 text-center shadow-md">General Checkup</div>
+      <div class="bg-white rounded-lg p-5 text-center shadow-md">Laboratory Test</div>
+      <div class="bg-white rounded-lg p-5 text-center shadow-md">Emergency Care</div>
+      <div class="bg-white rounded-lg p-5 text-center shadow-md">Vaccination</div>
+    </div>
+  </section>
+
+  <!-- Doctors -->
+  <section class="py-10 px-5">
+    <h2 class="text-2xl font-semibold text-center mb-5">Our Doctors</h2>
+    <div class="grid grid-cols-1 sm:grid-cols-3 gap-5 max-w-3xl mx-auto">
+      <div class="bg-white rounded-lg p-5 text-center shadow-md">
+        <h3 class="font-bold text-lg">Dr. Shreya Singh Bhujel</h3>
+        <p class="text-gray-500">Cardiologist</p>
+      </div>
+      <div class="bg-white rounded-lg p-5 text-center shadow-md">
+        <h3 class="font-bold text-lg">Dr. Anshu Rijal</h3>
+        <p class="text-gray-500">Dermatologist</p>
+      </div>
+      <div class="bg-white rounded-lg p-5 text-center shadow-md">
+        <h3 class="font-bold text-lg">Dr. Shivam Pansari</h3>
+        <p class="text-gray-500">Pediatrician</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Departments -->
+  <section class="py-10 px-5">
+    <h2 class="text-2xl font-semibold text-center mb-5">Departments</h2>
+    <ul class="max-w-xs mx-auto space-y-3">
+      <li class="bg-white px-4 py-3 rounded shadow text-center">Cardiology</li>
+      <li class="bg-white px-4 py-3 rounded shadow text-center">Neurology</li>
+      <li class="bg-white px-4 py-3 rounded shadow text-center">Orthopedics</li>
+      <li class="bg-white px-4 py-3 rounded shadow text-center">Pediatrics</li>
+    </ul>
+  </section>
+
+  <!-- Appointment Form -->
+  <section class="py-10 px-5">
+    <h2 class="text-2xl font-semibold text-center mb-5">Appointment Form</h2>
+    <form class="max-w-lg mx-auto">
+      <input
+        type="text"
+        placeholder="Patient Name"
+        class="w-full border border-gray-300 rounded px-3 py-2 mb-4 focus:outline-none focus:ring-2 focus:ring-blue-900"
+      />
+      <input
+        type="email"
+        placeholder="Email"
+        class="w-full border border-gray-300 rounded px-3 py-2 mb-4 focus:outline-none focus:ring-2 focus:ring-blue-900"
+      />
+      <input
+        type="date"
+        class="w-full border border-gray-300 rounded px-3 py-2 mb-4 focus:outline-none focus:ring-2 focus:ring-blue-900"
+      />
+      <textarea
+        rows="5"
+        placeholder="Message"
+        class="w-full border border-gray-300 rounded px-3 py-2 mb-4 focus:outline-none focus:ring-2 focus:ring-blue-900"
+      ></textarea>
+      <button
+        type="submit"
+        class="w-full py-3 bg-blue-900 text-white rounded hover:bg-blue-800 transition font-semibold"
+      >
+        Submit
+      </button>
+    </form>
+  </section>
+
+  <!-- Patient Records -->
+  <section class="py-10 px-5">
+    <h2 class="text-2xl font-semibold text-center mb-5">Patient Records</h2>
+    <div class="overflow-x-auto max-w-3xl mx-auto">
+      <table class="w-full bg-white border-collapse shadow rounded overflow-hidden">
+        <thead class="bg-blue-900 text-white">
+          <tr>
+            <th class="border border-gray-300 px-4 py-2">ID</th>
+            <th class="border border-gray-300 px-4 py-2">Name</th>
+            <th class="border border-gray-300 px-4 py-2">Age</th>
+            <th class="border border-gray-300 px-4 py-2">Disease</th>
+          </tr>
+        </thead>
+        <tbody class="text-center">
+          <tr class="hover:bg-gray-50">
+            <td class="border border-gray-300 px-4 py-2">1</td>
+            <td class="border border-gray-300 px-4 py-2">Puskare</td>
+            <td class="border border-gray-300 px-4 py-2">25</td>
+            <td class="border border-gray-300 px-4 py-2">Fever</td>
+          </tr>
+          <tr class="hover:bg-gray-50">
+            <td class="border border-gray-300 px-4 py-2">2</td>
+            <td class="border border-gray-300 px-4 py-2">Saugat</td>
+            <td class="border border-gray-300 px-4 py-2">30</td>
+            <td class="border border-gray-300 px-4 py-2">Cold</td>
+          </tr>
+          <tr class="hover:bg-gray-50">
+            <td class="border border-gray-300 px-4 py-2">3</td>
+            <td class="border border-gray-300 px-4 py-2">Dawg</td>
+            <td class="border border-gray-300 px-4 py-2">40</td>
+            <td class="border border-gray-300 px-4 py-2">Diabetes</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- Testimonials -->
+  <section class="py-10 px-5">
+    <h2 class="text-2xl font-semibold text-center mb-5">Testimonials</h2>
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-5 max-w-2xl mx-auto">
+      <div class="bg-white rounded-lg p-5 text-center shadow-md italic text-gray-600">
+        "Excellent service and friendly doctors."
+      </div>
+      <div class="bg-white rounded-lg p-5 text-center shadow-md italic text-gray-600">
+        "Very clean clinic and quick treatment."
+      </div>
+    </div>
+  </section>
+
+  <!-- Contact -->
+  <section class="py-10 px-5 text-center">
+    <h2 class="text-2xl font-semibold mb-4">Contact Us</h2>
+    <p class="text-gray-700">Email: kyromx913@gmail.com</p>
+    <p class="text-gray-700">Phone: +977-9746899327</p>
+    <p class="text-gray-700">Address: Kathmandu, Nepal</p>
+  </section>
+
+  <!-- Footer -->
+  <footer class="bg-blue-900 text-white text-center py-4">
+    <p>© 2026 Clinic Management System. All Rights Reserved.</p>
+  </footer>
+
+</body>
+</html>
