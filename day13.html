@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Fetch API CRUD Example</title>
+
+<style>
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:Arial, Helvetica, sans-serif;
+}
+
+body{
+    background:#f4f7fb;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    min-height:100vh;
+}
+
+.container{
+    width:700px;
+    background:white;
+    padding:25px;
+    border-radius:12px;
+    box-shadow:0 10px 25px rgba(0,0,0,.15);
+}
+
+h1{
+    text-align:center;
+    margin-bottom:20px;
+    color:#333;
+}
+
+.buttons{
+    display:flex;
+    gap:10px;
+    flex-wrap:wrap;
+    justify-content:center;
+    margin-bottom:20px;
+}
+
+button{
+    padding:12px 20px;
+    border:none;
+    border-radius:6px;
+    color:white;
+    cursor:pointer;
+    font-size:15px;
+    transition:.3s;
+}
+
+.get{background:#3498db;}
+.post{background:#2ecc71;}
+.put{background:#f39c12;}
+.delete{background:#e74c3c;}
+
+button:hover{
+    opacity:.85;
+    transform:scale(1.05);
+}
+
+pre{
+    background:#272822;
+    color:#00ff99;
+    padding:15px;
+    border-radius:8px;
+    height:350px;
+    overflow:auto;
+}
+</style>
+
+</head>
+<body>
+
+<div class="container">
+
+<h1>Fetch API CRUD Operations</h1>
+
+<div class="buttons">
+<button class="get" onclick="loadPosts()">Load Posts</button>
+<button class="post" onclick="addPost()">Add Post</button>
+<button class="put" onclick="editPost()">Update Post</button>
+<button class="delete" onclick="removePost()">Delete Post</button>
+</div>
+
+<pre id="result">Click a button to perform a CRUD operation.</pre>
+
+</div>
+
+<script>
+
+const API_URL = "https://jsonplaceholder.typicode.com/posts";
+const output = document.getElementById("result");
+
+// GET
+async function loadPosts(){
+
+    try{
+
+        const response = await fetch(API_URL);
+
+        if(!response.ok){
+            throw new Error("Unable to fetch posts.");
+        }
+
+        const posts = await response.json();
+        output.textContent = JSON.stringify(posts.slice(0,3), null, 2);
+
+    }catch(error){
+
+        output.textContent = error.message;
+
+    }
+
+}
+
+// POST
+async function addPost(){
+
+    const postData = {
+        title:"Async Await Example",
+        body:"Created using Fetch API",
+        userId:5
+    };
+
+    try{
+
+        const response = await fetch(API_URL,{
+            method:"POST",
+            headers:{
+                "Content-Type":"application/json"
+            },
+            body:JSON.stringify(postData)
+        });
+
+        if(!response.ok){
+            throw new Error("Failed to add post.");
+        }
+
+        const data = await response.json();
+        output.textContent = "✅ Post Added\n\n" + JSON.stringify(data,null,2);
+
+    }catch(error){
+
+        output.textContent = error.message;
+
+    }
+
+}
+
+// PUT
+async function editPost(){
+
+    const updatedData = {
+        id:1,
+        title:"Updated Title",
+        body:"This post has been updated.",
+        userId:5
+    };
+
+    try{
+
+        const response = await fetch(`${API_URL}/1`,{
+            method:"PUT",
+            headers:{
+                "Content-Type":"application/json"
+            },
+            body:JSON.stringify(updatedData)
+        });
+
+        if(!response.ok){
+            throw new Error("Failed to update post.");
+        }
+
+        const data = await response.json();
+        output.textContent = "✏️ Post Updated\n\n" + JSON.stringify(data,null,2);
+
+    }catch(error){
+
+        output.textContent = error.message;
+
+    }
+
+}
+
+// DELETE
+async function removePost(){
+
+    try{
+
+        const response = await fetch(`${API_URL}/1`,{
+            method:"DELETE"
+        });
+
+        output.textContent = response.ok
+            ? "🗑️ Record deleted successfully."
+            : "Delete operation failed.";
+
+    }catch(error){
+
+        output.textContent = error.message;
+
+    }
+
+}
+
+</script>
+
+</body>
+</html>
