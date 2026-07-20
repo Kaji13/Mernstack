@@ -1,0 +1,59 @@
+const reasons = [
+  {
+    icon: '🏥',
+    title: 'Modern Facilities',
+    description: 'State-of-the-art equipment and clean, comfortable treatment rooms.',
+  },
+  {
+    icon: '👨‍⚕️',
+    title: 'Expert Physicians',
+    description: 'Highly qualified doctors with years of clinical experience.',
+  },
+  {
+    icon: '⏱️',
+    title: 'Minimal Wait Times',
+    description: 'Efficient scheduling so you spend less time waiting.',
+  },
+  {
+    icon: '💊',
+    title: 'Affordable Care',
+    description: 'Transparent pricing and flexible payment options for all patients.',
+  },
+]
+
+function WhyChooseUs() {
+  return (
+    <section id="about" className="section why-choose">
+      <div className="container why-choose__inner">
+        <div className="why-choose__content">
+          <span className="section__label">Why Choose Us</span>
+          <h2>Healthcare You Can Trust</h2>
+          <p>
+            At MediCare Clinic, we combine medical excellence with a patient-first
+            approach. Our team is committed to delivering personalized care in a
+            welcoming environment.
+          </p>
+          <ul className="why-choose__list">
+            {reasons.map((reason) => (
+              <li key={reason.title}>
+                <span className="why-choose__icon">{reason.icon}</span>
+                <div>
+                  <strong>{reason.title}</strong>
+                  <p>{reason.description}</p>
+                </div>
+              </li>
+            ))}
+          </ul>
+        </div>
+        <div className="why-choose__visual" aria-hidden="true">
+          <div className="why-choose__image">
+            <span>🏥</span>
+            <p>Patient-Centered Care</p>
+          </div>
+        </div>
+      </div>
+    </section>
+  )
+}
+
+export default WhyChooseUs
