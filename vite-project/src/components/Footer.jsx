@@ -1,16 +1,27 @@
 function Footer() {
   return (
     <footer className="footer">
+      <div className="footer__wave" aria-hidden="true" />
       <div className="container footer__inner">
         <div className="footer__brand">
           <a href="#home" className="navbar__logo">
-            <span className="navbar__logo-icon" aria-hidden="true">+</span>
+            <span className="navbar__logo-icon" aria-hidden="true">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
+                <path d="M12 5v14M5 12h14" />
+              </svg>
+            </span>
             MediCare Clinic
           </a>
           <p>
             Providing compassionate, quality healthcare for you and your loved ones
             since 2005.
           </p>
+          <div className="footer__social">
+            <a href="#" aria-label="Facebook">f</a>
+            <a href="#" aria-label="Twitter">𝕏</a>
+            <a href="#" aria-label="Instagram">◎</a>
+            <a href="#" aria-label="LinkedIn">in</a>
+          </div>
         </div>
         <div className="footer__links">
           <h4>Quick Links</h4>
@@ -41,8 +52,12 @@ function Footer() {
         </div>
       </div>
       <div className="footer__bottom">
-        <div className="container">
+        <div className="container footer__bottom-inner">
           <p>&copy; {new Date().getFullYear()} MediCare Clinic. All rights reserved.</p>
+          <div className="footer__legal">
+            <a href="#">Privacy Policy</a>
+            <a href="#">Terms of Service</a>
+          </div>
         </div>
       </div>
     </footer>

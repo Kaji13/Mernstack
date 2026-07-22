@@ -1,3 +1,5 @@
+import ScrollReveal from '../hooks/ScrollReveal'
+
 const reasons = [
   {
     icon: '🏥',
@@ -25,7 +27,7 @@ function WhyChooseUs() {
   return (
     <section id="about" className="section why-choose">
       <div className="container why-choose__inner">
-        <div className="why-choose__content">
+        <ScrollReveal className="why-choose__content">
           <span className="section__label">Why Choose Us</span>
           <h2>Healthcare You Can Trust</h2>
           <p>
@@ -44,13 +46,18 @@ function WhyChooseUs() {
               </li>
             ))}
           </ul>
-        </div>
-        <div className="why-choose__visual" aria-hidden="true">
+        </ScrollReveal>
+        <ScrollReveal className="why-choose__visual" delay={120} aria-hidden="true">
           <div className="why-choose__image">
+            <div className="why-choose__image-badge">Certified Excellence</div>
             <span>🏥</span>
             <p>Patient-Centered Care</p>
+            <div className="why-choose__stats-mini">
+              <div><strong>ISO</strong><span>Certified</span></div>
+              <div><strong>A+</strong><span>Safety Rating</span></div>
+            </div>
           </div>
-        </div>
+        </ScrollReveal>
       </div>
     </section>
   )

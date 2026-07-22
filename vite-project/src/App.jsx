@@ -9,6 +9,7 @@ import Testimonials from './components/Testimonials'
 import Gallery from './components/Gallery'
 import FAQs from './components/FAQs'
 import Footer from './components/Footer'
+import BackToTop from './components/BackToTop'
 import './App.css'
 
 function App() {
@@ -27,6 +28,7 @@ function App() {
         <FAQs />
       </main>
       <Footer />
+      <BackToTop />
     </>
   )
 }

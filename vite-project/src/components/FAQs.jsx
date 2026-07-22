@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import ScrollReveal from '../hooks/ScrollReveal'
 
 const faqs = [
   {
@@ -34,12 +35,12 @@ function FAQs() {
   return (
     <section id="faq" className="section faqs">
       <div className="container">
-        <div className="section__header">
+        <ScrollReveal className="section__header">
           <span className="section__label">FAQ</span>
           <h2>Frequently Asked Questions</h2>
           <p>Find answers to common questions about our services and policies.</p>
-        </div>
-        <div className="faqs__list">
+        </ScrollReveal>
+        <ScrollReveal className="faqs__list" delay={80}>
           {faqs.map((faq, index) => {
             const isOpen = openIndex === index
             return (
@@ -50,14 +51,17 @@ function FAQs() {
                   aria-expanded={isOpen}
                   onClick={() => setOpenIndex(isOpen ? -1 : index)}
                 >
+                  <span className="faq-item__number">{String(index + 1).padStart(2, '0')}</span>
                   {faq.question}
                   <span className="faq-item__icon" aria-hidden="true">{isOpen ? '−' : '+'}</span>
                 </button>
-                {isOpen && <div className="faq-item__answer">{faq.answer}</div>}
+                <div className="faq-item__answer-wrap" style={{ gridTemplateRows: isOpen ? '1fr' : '0fr' }}>
+                  <div className="faq-item__answer">{faq.answer}</div>
+                </div>
               </article>
             )
           })}
-        </div>
+        </ScrollReveal>
       </div>
     </section>
   )

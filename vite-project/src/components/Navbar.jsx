@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 
 const navLinks = [
   { href: '#home', label: 'Home' },
@@ -12,20 +12,36 @@ const navLinks = [
 
 function Navbar() {
   const [menuOpen, setMenuOpen] = useState(false)
+  const [scrolled, setScrolled] = useState(false)
+
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 24)
+    window.addEventListener('scroll', onScroll, { passive: true })
+    return () => window.removeEventListener('scroll', onScroll)
+  }, [])
+
+  useEffect(() => {
+    document.body.style.overflow = menuOpen ? 'hidden' : ''
+    return () => { document.body.style.overflow = '' }
+  }, [menuOpen])
 
   const closeMenu = () => setMenuOpen(false)
 
   return (
-    <header className="navbar">
+    <header className={`navbar ${scrolled ? 'navbar--scrolled' : ''}`}>
       <div className="navbar__inner container">
         <a href="#home" className="navbar__logo" onClick={closeMenu}>
-          <span className="navbar__logo-icon" aria-hidden="true">+</span>
+          <span className="navbar__logo-icon" aria-hidden="true">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
+              <path d="M12 5v14M5 12h14" />
+            </svg>
+          </span>
           MediCare Clinic
         </a>
 
         <button
           type="button"
-          className="navbar__toggle"
+          className={`navbar__toggle ${menuOpen ? 'navbar__toggle--open' : ''}`}
           aria-label="Toggle navigation menu"
           aria-expanded={menuOpen}
           onClick={() => setMenuOpen((open) => !open)}
@@ -50,6 +66,7 @@ function Navbar() {
           </a>
         </nav>
       </div>
+      {menuOpen && <div className="navbar__overlay" onClick={closeMenu} aria-hidden="true" />}
     </header>
   )
 }
