@@ -1,0 +1,73 @@
+export default {
+  clinic: {
+    name: 'MediCare Clinic',
+    tagline: 'Trusted Healthcare Since 2005',
+    phone: '+1 (555) 123-4567',
+    email: 'hello@medicareclinic.com',
+    address: '123 Health Street, Medical City',
+    city: 'Medical City, MC 10001',
+    hero: {
+      title: 'Your Health, Our Priority',
+      subtitle:
+        'Comprehensive medical care with experienced doctors, modern facilities, and compassionate support for you and your family.',
+      badge: 'Trusted Healthcare Since 2005',
+      rating: 4.9,
+      reviewCount: 2400,
+      isOpen: true,
+      openHours: 'Mon – Sat, 8 AM – 8 PM',
+    },
+    hours: [
+      { day: 'Mon – Fri', time: '8 AM – 8 PM' },
+      { day: 'Saturday', time: '9 AM – 5 PM' },
+      { day: 'Sunday', time: 'Closed' },
+      { day: 'Emergency', time: '24/7' },
+    ],
+    departments: [
+      { value: 'general', label: 'General Medicine' },
+      { value: 'cardiology', label: 'Cardiology' },
+      { value: 'orthopedics', label: 'Orthopedics' },
+      { value: 'pediatrics', label: 'Pediatrics' },
+      { value: 'dental', label: 'Dental Care' },
+    ],
+  },
+  services: [
+    { icon: '🫀', title: 'Cardiology', description: 'Heart health screenings, diagnostics, and personalized treatment plans.' },
+    { icon: '🦴', title: 'Orthopedics', description: 'Bone, joint, and muscle care with advanced rehabilitation support.' },
+    { icon: '👶', title: 'Pediatrics', description: 'Gentle, specialized healthcare for infants, children, and teens.' },
+    { icon: '🦷', title: 'Dental Care', description: 'Preventive, cosmetic, and restorative dentistry under one roof.' },
+    { icon: '👁️', title: 'Eye Care', description: 'Vision testing, eye disease management, and surgical options.' },
+    { icon: '🧪', title: 'Laboratory', description: 'Accurate lab tests with fast turnaround and digital reports.' },
+  ],
+  doctors: [
+    { name: 'Dr. Sarah Mitchell', specialty: 'Cardiologist', experience: '12 years experience', initials: 'SM', rating: 4.9, available: true },
+    { name: 'Dr. James Chen', specialty: 'Orthopedic Surgeon', experience: '15 years experience', initials: 'JC', rating: 4.8, available: true },
+    { name: 'Dr. Emily Rodriguez', specialty: 'Pediatrician', experience: '10 years experience', initials: 'ER', rating: 5.0, available: false },
+    { name: 'Dr. Michael Okonkwo', specialty: 'General Physician', experience: '18 years experience', initials: 'MO', rating: 4.9, available: true },
+  ],
+  statistics: [
+    { value: '15,000+', label: 'Patients Treated' },
+    { value: '50+', label: 'Medical Specialists' },
+    { value: '20+', label: 'Years of Service' },
+    { value: '98%', label: 'Patient Satisfaction' },
+  ],
+  testimonials: [
+    { quote: 'The staff was incredibly kind and professional. Dr. Mitchell took the time to explain everything clearly. I felt truly cared for.', name: 'Lisa Thompson', role: 'Cardiology Patient', initials: 'LT', rating: 5 },
+    { quote: 'Booking was easy and the wait time was minimal. The clinic is clean and modern. Highly recommend for family healthcare.', name: 'David Park', role: 'Pediatrics Patient', initials: 'DP', rating: 5, featured: true },
+    { quote: 'After my knee surgery, the orthopedic team guided me through recovery with patience and expertise. Excellent care all around.', name: 'Maria Santos', role: 'Orthopedics Patient', initials: 'MS', rating: 5 },
+  ],
+  faqs: [
+    { question: 'What are your clinic hours?', answer: 'We are open Monday through Saturday, 8:00 AM to 8:00 PM. Emergency services are available 24/7.' },
+    { question: 'Do I need an appointment to visit?', answer: 'Walk-ins are welcome for general consultations, but we recommend booking an appointment to reduce wait times.' },
+    { question: 'Which insurance plans do you accept?', answer: 'We accept most major insurance providers. Contact our front desk to verify your specific plan coverage.' },
+    { question: 'How do I get my lab results?', answer: 'Lab results are typically available within 24–48 hours. You can access them online or collect a printed copy at reception.' },
+    { question: 'Is parking available at the clinic?', answer: 'Yes, we offer free parking for all patients and visitors in our dedicated clinic parking lot.' },
+  ],
+  gallery: [
+    { label: 'Reception Area', gradient: 'linear-gradient(135deg, #dbeafe 0%, #93c5fd 100%)', icon: '🛋️' },
+    { label: 'Consultation Room', gradient: 'linear-gradient(135deg, #d1fae5 0%, #6ee7b7 100%)', icon: '🩺' },
+    { label: 'Laboratory', gradient: 'linear-gradient(135deg, #e0e7ff 0%, #a5b4fc 100%)', icon: '🧪' },
+    { label: 'Waiting Lounge', gradient: 'linear-gradient(135deg, #fce7f3 0%, #f9a8d4 100%)', icon: '☕' },
+    { label: 'Surgery Suite', gradient: 'linear-gradient(135deg, #ccfbf1 0%, #5eead4 100%)', icon: '💉' },
+    { label: 'Pharmacy', gradient: 'linear-gradient(135deg, #fef3c7 0%, #fcd34d 100%)', icon: '💊' },
+  ],
+}

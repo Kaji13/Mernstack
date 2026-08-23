@@ -1,0 +1,16 @@
+{
+  "name": "web-clinic",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Web Clinic — MERN stack clinic website",
+  "scripts": {
+    "dev:frontend": "npm run dev --prefix frontend",
+    "dev:backend": "npm run dev --prefix backend",
+    "start:backend": "npm start --prefix backend"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Kaji13/Mernstack.git"
+  },
+  "license": "ISC"
+}
