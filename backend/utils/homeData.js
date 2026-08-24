@@ -18,15 +18,42 @@ const stripMeta = (doc) => {
   return { id: _id?.toString(), ...rest }
 }
 
+const toHomeService = (doc) => {
+  const item = doc.toObject ? doc.toObject() : doc
+  const { slug, icon, title, description, order } = item
+  return { id: slug ?? item._id?.toString(), icon, title, description, order }
+}
+
+const getHomeServicesFromSeed = () =>
+  seedData.services
+    .filter((service) => service.featuredOnHome)
+    .map(({ slug, icon, title, description, order }) => ({
+      id: slug,
+      icon,
+      title,
+      description,
+      order,
+    }))
+
+const getSeedHomeData = () => ({
+  clinic: seedData.clinic,
+  services: getHomeServicesFromSeed(),
+  doctors: seedData.doctors,
+  statistics: seedData.statistics,
+  testimonials: seedData.testimonials,
+  faqs: seedData.faqs,
+  gallery: seedData.gallery,
+})
+
 async function getHomeData() {
   if (!isDbConnected()) {
-    return seedData
+    return getSeedHomeData()
   }
 
   const [clinicDoc, services, doctors, statistics, testimonials, faqs, gallery] =
     await Promise.all([
       ClinicInfo.findOne().lean(),
-      Service.find().sort({ order: 1 }).lean(),
+      Service.find({ featuredOnHome: true }).sort({ order: 1 }).lean(),
       Doctor.find({ featured: true }).sort({ order: 1 }).lean(),
       Statistic.find().sort({ order: 1 }).lean(),
       Testimonial.find().sort({ order: 1 }).lean(),
@@ -44,7 +71,7 @@ async function getHomeData() {
     gallery.length
 
   if (!hasData) {
-    return seedData
+    return getSeedHomeData()
   }
 
   return {
@@ -56,7 +83,7 @@ async function getHomeData() {
           __v: undefined,
         }
       : seedData.clinic,
-    services: services.length ? services.map(stripMeta) : seedData.services,
+    services: services.length ? services.map(toHomeService) : getHomeServicesFromSeed(),
     doctors: doctors.length ? doctors.map(stripMeta) : seedData.doctors,
     statistics: statistics.length ? statistics.map(stripMeta) : seedData.statistics,
     testimonials: testimonials.length ? testimonials.map(stripMeta) : seedData.testimonials,

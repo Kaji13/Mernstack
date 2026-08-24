@@ -4,6 +4,9 @@ const mongoose = require('mongoose')
 const connectDB = require('../config/db')
 const seedData = require('../data/seedData')
 const Service = require('../models/Service')
+const ServiceCategory = require('../models/ServiceCategory')
+const CareProcessStep = require('../models/CareProcessStep')
+const ServiceHighlight = require('../models/ServiceHighlight')
 const Doctor = require('../models/Doctor')
 const Statistic = require('../models/Statistic')
 const Testimonial = require('../models/Testimonial')
@@ -21,6 +24,9 @@ async function seed() {
 
   await Promise.all([
     Service.deleteMany(),
+    ServiceCategory.deleteMany(),
+    CareProcessStep.deleteMany(),
+    ServiceHighlight.deleteMany(),
     Doctor.deleteMany(),
     Statistic.deleteMany(),
     Testimonial.deleteMany(),
@@ -31,13 +37,16 @@ async function seed() {
 
   await ClinicInfo.create(seedData.clinic)
   await Service.insertMany(seedData.services)
+  await ServiceCategory.insertMany(seedData.serviceCategories)
+  await CareProcessStep.insertMany(seedData.careProcess)
+  await ServiceHighlight.insertMany(seedData.serviceHighlights)
   await Doctor.insertMany(seedData.doctors)
   await Statistic.insertMany(seedData.statistics)
   await Testimonial.insertMany(seedData.testimonials)
   await FAQ.insertMany(seedData.faqs)
   await GalleryItem.insertMany(seedData.gallery)
 
-  console.log('Database seeded with home page content.')
+  console.log('Database seeded with home and services page content.')
   await mongoose.disconnect()
 }
 
