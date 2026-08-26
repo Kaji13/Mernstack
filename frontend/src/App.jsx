@@ -2,6 +2,7 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import { HomeDataProvider } from './context/HomeDataContext'
 import HomePage from './pages/HomePage'
 import ServicesPage from './pages/ServicesPage'
+import DoctorsPage from './pages/DoctorsPage'
 import './App.css'
 
 function App() {
@@ -11,6 +12,7 @@ function App() {
         <Routes>
           <Route path="/" element={<HomePage />} />
           <Route path="/services" element={<ServicesPage />} />
+          <Route path="/doctors" element={<DoctorsPage />} />
         </Routes>
       </BrowserRouter>
     </HomeDataProvider>

@@ -1,5 +1,13 @@
+import { Link } from 'react-router-dom'
 import ScrollReveal from '../hooks/ScrollReveal'
 import { useHomeData } from '../context/HomeDataContext'
+
+const doctorSlugs = {
+  'Dr. Sarah Mitchell': 'sarah-mitchell',
+  'Dr. James Chen': 'james-chen',
+  'Dr. Emily Rodriguez': 'emily-rodriguez',
+  'Dr. Michael Okonkwo': 'michael-okonkwo',
+}
 
 function FeaturedDoctors() {
   const { data } = useHomeData()
@@ -32,13 +40,22 @@ function FeaturedDoctors() {
                   <span className="doctor-card__rating">★ {doctor.rating}</span>
                   <span className="doctor-card__experience">{doctor.experience}</span>
                 </div>
-                <a href="#appointment" className="btn btn--outline btn--sm btn--full">
-                  Book Appointment
-                </a>
+                <Link
+                  to={doctorSlugs[doctor.name] ? `/doctors?doctor=${doctorSlugs[doctor.name]}` : '/doctors'}
+                  className="btn btn--outline btn--sm btn--full"
+                >
+                  View profile
+                </Link>
               </article>
             </ScrollReveal>
           ))}
         </div>
+        <ScrollReveal className="doctors__footer" delay={doctors.length * 90}>
+          <Link to="/doctors" className="btn btn--outline">
+            View all doctors
+            <span aria-hidden="true">→</span>
+          </Link>
+        </ScrollReveal>
       </div>
     </section>
   )

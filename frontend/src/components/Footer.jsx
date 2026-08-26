@@ -29,7 +29,7 @@ function Footer() {
           <h4>Quick Links</h4>
           <ul>
             <li><Link to="/services">Services</Link></li>
-            <li><a href="/#doctors">Doctors</a></li>
+            <li><Link to="/doctors">Doctors</Link></li>
             <li><a href="/#about">About Us</a></li>
             <li><a href="/#appointment">Book Appointment</a></li>
           </ul>

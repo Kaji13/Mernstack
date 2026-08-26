@@ -1,0 +1,701 @@
+/* Doctors Page */
+.doctors-page__hero {
+  position: relative;
+  background: linear-gradient(135deg, var(--primary-dark) 0%, var(--primary) 45%, var(--primary-light) 100%);
+  color: var(--white);
+  padding: 5rem 0 4.5rem;
+  overflow: hidden;
+}
+
+.doctors-page__hero-bg {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.doctors-page__hero-blob {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(80px);
+  opacity: 0.35;
+}
+
+.doctors-page__hero-blob--1 {
+  width: 420px;
+  height: 420px;
+  background: var(--accent);
+  top: -120px;
+  right: -80px;
+}
+
+.doctors-page__hero-blob--2 {
+  width: 320px;
+  height: 320px;
+  background: #60a5fa;
+  bottom: -100px;
+  left: -60px;
+}
+
+.doctors-page__hero-grid {
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(255, 255, 255, 0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.04) 1px, transparent 1px);
+  background-size: 48px 48px;
+  mask-image: linear-gradient(to bottom, black 40%, transparent);
+}
+
+.doctors-page__hero-inner {
+  position: relative;
+  max-width: 720px;
+}
+
+.doctors-page__hero h1 {
+  color: var(--white);
+  margin-bottom: 1.25rem;
+}
+
+.doctors-page__hero-inner > .reveal > p {
+  font-size: 1.125rem;
+  line-height: 1.75;
+  opacity: 0.92;
+  margin-bottom: 2.5rem;
+}
+
+.doctors-page__breadcrumb {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.875rem;
+  margin-bottom: 1.5rem;
+  opacity: 0.85;
+}
+
+.doctors-page__breadcrumb a {
+  color: var(--white);
+  text-decoration: none;
+  transition: opacity var(--transition);
+}
+
+.doctors-page__breadcrumb a:hover {
+  opacity: 0.75;
+  text-decoration: underline;
+}
+
+.doctors-page__hero-stats {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.5rem 2.5rem;
+}
+
+.doctors-page__hero-stats div {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.doctors-page__hero-stats strong {
+  font-size: 1.75rem;
+  font-weight: 800;
+  color: var(--white);
+  letter-spacing: -0.02em;
+}
+
+.doctors-page__hero-stats span {
+  font-size: 0.875rem;
+  opacity: 0.8;
+}
+
+.doctors-page__toolbar {
+  padding: 0;
+  margin-top: -2rem;
+  position: relative;
+  z-index: 2;
+}
+
+.doctors-page__toolbar-inner {
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 1.25rem 1.5rem;
+  box-shadow: var(--shadow-lg);
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.doctors-page__search {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.75rem 1rem;
+  background: var(--bg-alt);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  color: var(--text-light);
+}
+
+.doctors-page__search input {
+  flex: 1;
+  border: none;
+  background: transparent;
+  font: inherit;
+  font-size: 0.9375rem;
+  color: var(--text-dark);
+  outline: none;
+}
+
+.doctors-page__search input::placeholder {
+  color: var(--text-light);
+}
+
+.doctors-page__filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.doctors-page__filter {
+  padding: 0.5rem 1rem;
+  font: inherit;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--text);
+  background: var(--bg-muted);
+  border: 1px solid transparent;
+  border-radius: 999px;
+  cursor: pointer;
+  transition: background var(--transition), color var(--transition), border-color var(--transition);
+}
+
+.doctors-page__filter:hover {
+  background: var(--accent-light);
+  color: var(--accent-dark);
+}
+
+.doctors-page__filter--active {
+  background: var(--primary);
+  color: var(--white);
+}
+
+.doctors-page__filter--active:hover {
+  background: var(--primary-dark);
+  color: var(--white);
+}
+
+.doctors-page__availability {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.doctors-page__avail {
+  padding: 0.4375rem 0.875rem;
+  font: inherit;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--text-light);
+  background: transparent;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  cursor: pointer;
+  transition: background var(--transition), color var(--transition), border-color var(--transition);
+}
+
+.doctors-page__avail:hover {
+  border-color: var(--accent);
+  color: var(--accent-dark);
+}
+
+.doctors-page__avail--active {
+  background: var(--accent-light);
+  border-color: var(--accent);
+  color: var(--accent-dark);
+}
+
+.doctors-page__catalog {
+  padding-top: 3rem;
+  background: var(--bg-alt);
+}
+
+.doctors-page__grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.5rem;
+}
+
+.doctors-page__card {
+  position: relative;
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1.75rem;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  transition: box-shadow var(--transition), transform var(--transition), border-color var(--transition);
+  overflow: hidden;
+}
+
+.doctors-page__card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: var(--doctor-accent, var(--accent));
+  opacity: 0;
+  transition: opacity var(--transition);
+}
+
+.doctors-page__card:hover {
+  box-shadow: var(--shadow-lg);
+  transform: translateY(-4px);
+  border-color: transparent;
+}
+
+.doctors-page__card:hover::before {
+  opacity: 1;
+}
+
+.doctors-page__badge {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  font-size: 0.6875rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  padding: 0.3125rem 0.625rem;
+  background: var(--accent-light);
+  color: var(--accent-dark);
+  border-radius: 999px;
+}
+
+.doctors-page__card-top {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+  padding-right: 4.5rem;
+}
+
+.doctors-page__avatar {
+  width: 64px;
+  height: 64px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--white);
+  background: linear-gradient(135deg, var(--doctor-accent, var(--primary)), var(--primary-light));
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.doctors-page__avatar--lg {
+  width: 80px;
+  height: 80px;
+  font-size: 1.5rem;
+}
+
+.doctors-page__status {
+  font-size: 0.6875rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  padding: 0.25rem 0.5rem;
+  border-radius: 999px;
+  background: var(--bg-muted);
+  color: var(--text-light);
+  white-space: nowrap;
+}
+
+.doctors-page__status--online {
+  background: var(--accent-light);
+  color: var(--accent-dark);
+}
+
+.doctors-page__card h3 {
+  margin-bottom: 0.25rem;
+}
+
+.doctors-page__specialty {
+  color: var(--accent);
+  font-weight: 600;
+  font-size: 0.875rem;
+  margin: 0;
+}
+
+.doctors-page__title {
+  color: var(--text-light);
+  font-size: 0.8125rem;
+  margin: 0.125rem 0 0.75rem;
+}
+
+.doctors-page__meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  font-size: 0.8125rem;
+  color: var(--text);
+  margin-bottom: 0.875rem;
+}
+
+.doctors-page__bio {
+  color: var(--text-light);
+  font-size: 0.875rem;
+  line-height: 1.65;
+  margin-bottom: 1rem;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.doctors-page__tags {
+  list-style: none;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.375rem;
+  margin: 0 0 1.25rem;
+}
+
+.doctors-page__tags li {
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 0.25rem 0.5rem;
+  background: var(--bg-alt);
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  color: var(--text);
+}
+
+.doctors-page__card-actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.5rem;
+  margin-top: auto;
+}
+
+.doctors-page__booked {
+  background: var(--bg-muted);
+  color: var(--text-light);
+  border-color: transparent;
+  cursor: not-allowed;
+}
+
+.doctors-page__booked:hover {
+  transform: none;
+  background: var(--bg-muted);
+  color: var(--text-light);
+}
+
+.doctors-page__empty {
+  text-align: center;
+  padding: 4rem 2rem;
+  background: var(--white);
+  border-radius: var(--radius);
+  border: 1px dashed var(--border);
+}
+
+.doctors-page__empty span {
+  font-size: 2.5rem;
+  display: block;
+  margin-bottom: 1rem;
+}
+
+.doctors-page__empty h3 {
+  margin-bottom: 0.5rem;
+}
+
+.doctors-page__empty p {
+  color: var(--text-light);
+  margin-bottom: 1.5rem;
+}
+
+.doctors-page__highlights {
+  background: var(--white);
+}
+
+.doctors-page__highlights-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1.5rem;
+}
+
+.doctors-page__highlight {
+  text-align: center;
+  padding: 2rem 1.25rem;
+  background: var(--bg-alt);
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+  transition: box-shadow var(--transition), transform var(--transition);
+}
+
+.doctors-page__highlight:hover {
+  box-shadow: var(--shadow);
+  transform: translateY(-2px);
+}
+
+.doctors-page__highlight-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 56px;
+  height: 56px;
+  font-size: 1.5rem;
+  background: var(--white);
+  border-radius: var(--radius-sm);
+  margin-bottom: 1rem;
+  box-shadow: var(--shadow-sm);
+}
+
+.doctors-page__highlight p {
+  color: var(--text-light);
+  font-size: 0.9375rem;
+  margin-top: 0.375rem;
+}
+
+.doctors-page__process {
+  background: var(--bg-alt);
+}
+
+.doctors-page__process-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1.5rem;
+}
+
+.doctors-page__process-step {
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 2rem 1.5rem;
+  text-align: center;
+}
+
+.doctors-page__process-num {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 48px;
+  font-size: 0.875rem;
+  font-weight: 800;
+  color: var(--white);
+  background: linear-gradient(135deg, var(--primary), var(--primary-light));
+  border-radius: 50%;
+  margin-bottom: 1rem;
+}
+
+.doctors-page__process-step p {
+  color: var(--text-light);
+  font-size: 0.9375rem;
+  line-height: 1.65;
+  margin-top: 0.5rem;
+}
+
+.doctors-page__cta {
+  padding: 0 0 6rem;
+  background: var(--bg-alt);
+}
+
+.doctors-page__cta-inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 2rem;
+  padding: 3rem;
+  background: linear-gradient(135deg, var(--primary-dark) 0%, var(--primary) 100%);
+  border-radius: var(--radius-lg);
+  color: var(--white);
+}
+
+.doctors-page__cta-inner h2 {
+  color: var(--white);
+  margin-bottom: 0.75rem;
+}
+
+.doctors-page__cta-inner p {
+  opacity: 0.9;
+  max-width: 480px;
+  line-height: 1.7;
+}
+
+.doctors-page__cta-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  flex-shrink: 0;
+}
+
+.doctors-page__cta .btn--outline {
+  border-color: rgba(255, 255, 255, 0.4);
+  color: var(--white);
+}
+
+.doctors-page__cta .btn--outline:hover {
+  background: var(--white);
+  color: var(--primary);
+  border-color: var(--white);
+}
+
+.doctors-page__modal-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+  background: rgba(6, 45, 84, 0.55);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1.5rem;
+  overflow-y: auto;
+}
+
+.doctors-page__modal {
+  position: relative;
+  width: min(640px, 100%);
+  background: var(--white);
+  border-radius: var(--radius-lg);
+  padding: 2rem;
+  box-shadow: var(--shadow-xl);
+  max-height: calc(100svh - 3rem);
+  overflow-y: auto;
+}
+
+.doctors-page__modal-close {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  width: 36px;
+  height: 36px;
+  border: none;
+  border-radius: 50%;
+  background: var(--bg-muted);
+  color: var(--text-dark);
+  font-size: 1.5rem;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.doctors-page__modal-header {
+  display: flex;
+  gap: 1.25rem;
+  align-items: flex-start;
+  margin-bottom: 1.25rem;
+  padding-right: 2rem;
+}
+
+.doctors-page__modal-bio {
+  color: var(--text);
+  line-height: 1.7;
+  margin-bottom: 1.5rem;
+}
+
+.doctors-page__facts {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+  margin: 0 0 1.5rem;
+}
+
+.doctors-page__facts dt {
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--text-light);
+}
+
+.doctors-page__facts dd {
+  margin: 0.25rem 0 0;
+  color: var(--text-dark);
+  font-weight: 600;
+  font-size: 0.9375rem;
+}
+
+.doctors-page__features {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin: 0 0 1.75rem;
+}
+
+.doctors-page__features li {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.9375rem;
+}
+
+.doctors-page__features svg {
+  color: var(--accent);
+  flex-shrink: 0;
+}
+
+.doctors-page__modal-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+@media (max-width: 1024px) {
+  .doctors-page__grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .doctors-page__highlights-grid,
+  .doctors-page__process-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 768px) {
+  .doctors-page__hero {
+    padding: 4rem 0 3.5rem;
+  }
+
+  .doctors-page__toolbar {
+    margin-top: -1.5rem;
+  }
+
+  .doctors-page__toolbar-inner {
+    padding: 1rem;
+  }
+
+  .doctors-page__grid,
+  .doctors-page__highlights-grid,
+  .doctors-page__process-grid,
+  .doctors-page__facts {
+    grid-template-columns: 1fr;
+  }
+
+  .doctors-page__card-actions {
+    grid-template-columns: 1fr;
+  }
+
+  .doctors-page__cta-inner {
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 2rem 1.5rem;
+  }
+
+  .doctors-page__cta-actions {
+    width: 100%;
+  }
+
+  .doctors-page__cta-actions .btn {
+    flex: 1;
+    min-width: 140px;
+  }
+
+  .doctors-page__modal-header {
+    flex-direction: column;
+  }
+}

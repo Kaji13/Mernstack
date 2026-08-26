@@ -286,6 +286,47 @@
   box-shadow: var(--shadow-lg);
 }
 
+.doctor-card__top {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.doctor-card__status {
+  display: inline-block;
+  font-size: 0.6875rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  padding: 0.25rem 0.5rem;
+  border-radius: 999px;
+  background: var(--bg-muted);
+  color: var(--text-light);
+  margin-bottom: 0.75rem;
+}
+
+.doctor-card__status--online {
+  background: var(--accent-light);
+  color: var(--accent-dark);
+}
+
+.doctor-card__meta {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  margin-bottom: 1.25rem;
+}
+
+.doctor-card__rating {
+  font-weight: 600;
+  color: var(--text-dark);
+}
+
+.doctors__footer {
+  text-align: center;
+  margin-top: 2.5rem;
+}
+
 .doctor-card__avatar {
   width: 80px;
   height: 80px;
