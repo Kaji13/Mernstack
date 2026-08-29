@@ -7,6 +7,7 @@ const appointmentRoutes = require('./routes/appointments')
 const homeRoutes = require('./routes/home')
 const servicesRoutes = require('./routes/services')
 const doctorRoutes = require('./routes/doctors')
+const authRoutes = require('./routes/auth')
 
 const app = express()
 const PORT = process.env.PORT || 5000
@@ -26,6 +27,7 @@ app.use('/api/home', homeRoutes)
 app.use('/api/services', servicesRoutes)
 app.use('/api/doctors', doctorRoutes)
 app.use('/api/appointments', appointmentRoutes)
+app.use('/api/auth', authRoutes)
 
 app.use((_req, res) => {
   res.status(404).json({ message: 'Route not found' })

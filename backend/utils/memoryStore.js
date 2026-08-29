@@ -1,5 +1,6 @@
 const appointments = []
 const waitlist = []
+const users = []
 
 function createId(prefix) {
   return `${prefix}-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`
@@ -54,9 +55,28 @@ function upsertWaitlist(data) {
   return entry
 }
 
+function addUser(data) {
+  const email = String(data.email).toLowerCase()
+  const user = {
+    _id: createId('user'),
+    role: 'editor',
+    ...data,
+    email,
+  }
+  users.push(user)
+  return user
+}
+
+function findUserByEmail(email) {
+  const normalized = String(email).toLowerCase()
+  return users.find((user) => user.email === normalized)
+}
+
 module.exports = {
   addAppointment,
   hasBookedSlot,
   bookedKeysFor,
   upsertWaitlist,
+  addUser,
+  findUserByEmail,
 }
