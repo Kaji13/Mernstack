@@ -1,3 +1,5 @@
+const doctorsCatalog = require('./doctorsCatalog')
+
 module.exports = {
   clinic: {
     name: 'MediCare Clinic',
@@ -194,12 +196,10 @@ module.exports = {
     { icon: '👨‍⚕️', title: 'Expert Specialists', description: 'Board-certified doctors across departments', order: 3 },
     { icon: '📱', title: 'Digital Reports', description: 'Access results and records online anytime', order: 4 },
   ],
-  doctors: [
-    { name: 'Dr. Sarah Mitchell', specialty: 'Cardiologist', experience: '12 years experience', initials: 'SM', rating: 4.9, available: true, featured: true, order: 1 },
-    { name: 'Dr. James Chen', specialty: 'Orthopedic Surgeon', experience: '15 years experience', initials: 'JC', rating: 4.8, available: true, featured: true, order: 2 },
-    { name: 'Dr. Emily Rodriguez', specialty: 'Pediatrician', experience: '10 years experience', initials: 'ER', rating: 5.0, available: false, featured: true, order: 3 },
-    { name: 'Dr. Michael Okonkwo', specialty: 'General Physician', experience: '18 years experience', initials: 'MO', rating: 4.9, available: true, featured: true, order: 4 },
-  ],
+  doctors: doctorsCatalog.doctors,
+  doctorSpecialties: doctorsCatalog.specialties,
+  doctorHighlights: doctorsCatalog.highlights,
+  doctorVisitSteps: doctorsCatalog.visitSteps,
   statistics: [
     { value: '15,000+', label: 'Patients Treated', order: 1 },
     { value: '50+', label: 'Medical Specialists', order: 2 },

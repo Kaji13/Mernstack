@@ -6,6 +6,7 @@ const connectDB = require('./config/db')
 const appointmentRoutes = require('./routes/appointments')
 const homeRoutes = require('./routes/home')
 const servicesRoutes = require('./routes/services')
+const doctorRoutes = require('./routes/doctors')
 
 const app = express()
 const PORT = process.env.PORT || 5000
@@ -23,6 +24,7 @@ app.get('/api/health', (_req, res) => {
 
 app.use('/api/home', homeRoutes)
 app.use('/api/services', servicesRoutes)
+app.use('/api/doctors', doctorRoutes)
 app.use('/api/appointments', appointmentRoutes)
 
 app.use((_req, res) => {

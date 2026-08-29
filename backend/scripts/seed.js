@@ -8,6 +8,9 @@ const ServiceCategory = require('../models/ServiceCategory')
 const CareProcessStep = require('../models/CareProcessStep')
 const ServiceHighlight = require('../models/ServiceHighlight')
 const Doctor = require('../models/Doctor')
+const DoctorSpecialty = require('../models/DoctorSpecialty')
+const DoctorHighlight = require('../models/DoctorHighlight')
+const DoctorVisitStep = require('../models/DoctorVisitStep')
 const Statistic = require('../models/Statistic')
 const Testimonial = require('../models/Testimonial')
 const FAQ = require('../models/FAQ')
@@ -28,6 +31,9 @@ async function seed() {
     CareProcessStep.deleteMany(),
     ServiceHighlight.deleteMany(),
     Doctor.deleteMany(),
+    DoctorSpecialty.deleteMany(),
+    DoctorHighlight.deleteMany(),
+    DoctorVisitStep.deleteMany(),
     Statistic.deleteMany(),
     Testimonial.deleteMany(),
     FAQ.deleteMany(),
@@ -41,12 +47,15 @@ async function seed() {
   await CareProcessStep.insertMany(seedData.careProcess)
   await ServiceHighlight.insertMany(seedData.serviceHighlights)
   await Doctor.insertMany(seedData.doctors)
+  await DoctorSpecialty.insertMany(seedData.doctorSpecialties)
+  await DoctorHighlight.insertMany(seedData.doctorHighlights)
+  await DoctorVisitStep.insertMany(seedData.doctorVisitSteps)
   await Statistic.insertMany(seedData.statistics)
   await Testimonial.insertMany(seedData.testimonials)
   await FAQ.insertMany(seedData.faqs)
   await GalleryItem.insertMany(seedData.gallery)
 
-  console.log('Database seeded with home and services page content.')
+  console.log('Database seeded with home, services, and doctors page content.')
   await mongoose.disconnect()
 }
 

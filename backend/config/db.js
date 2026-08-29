@@ -13,7 +13,7 @@ const connectDB = async () => {
     console.log('MongoDB connected')
   } catch (error) {
     console.error('MongoDB connection failed:', error.message)
-    process.exit(1)
+    console.warn('API will keep running with seed data until MongoDB is available.')
   }
 }
 

@@ -4,52 +4,100 @@ import Navbar from '../components/Navbar'
 import Footer from '../components/Footer'
 import BackToTop from '../components/BackToTop'
 import ScrollReveal from '../hooks/ScrollReveal'
+import DoctorVisitScheduler from '../components/DoctorVisitScheduler'
+import DoctorWaitlistForm from '../components/DoctorWaitlistForm'
+import { getDoctorsData } from '../api'
 import {
-  doctorSpecialties,
-  doctorsCatalog,
-  doctorHighlights,
-  doctorVisitSteps,
+  doctorSpecialties as fallbackSpecialties,
+  doctorsCatalog as fallbackDoctors,
+  doctorHighlights as fallbackHighlights,
+  doctorVisitSteps as fallbackSteps,
 } from '../data/doctorsPageData'
 import './DoctorsPage.css'
 
 function DoctorsPage() {
   const [searchParams, setSearchParams] = useSearchParams()
+  const [pageData, setPageData] = useState({
+    specialties: fallbackSpecialties,
+    doctors: fallbackDoctors,
+    highlights: fallbackHighlights,
+    visitSteps: fallbackSteps,
+    stats: {
+      total: fallbackDoctors.length,
+      available: fallbackDoctors.filter((doctor) => doctor.available).length,
+      averageRating: 4.8,
+    },
+  })
   const [activeSpecialty, setActiveSpecialty] = useState('all')
   const [availability, setAvailability] = useState('all')
   const [searchQuery, setSearchQuery] = useState('')
   const [selectedId, setSelectedId] = useState(null)
+  const [bookingDoctor, setBookingDoctor] = useState(null)
+  const [waitlistDoctor, setWaitlistDoctor] = useState(null)
 
-  const selectedDoctor = doctorsCatalog.find((doctor) => doctor.id === selectedId) ?? null
+  const doctors = pageData.doctors
+  const selectedDoctor = doctors.find((doctor) => (doctor.slug || doctor.id) === selectedId) ?? null
 
   useEffect(() => {
     window.scrollTo(0, 0)
   }, [])
 
   useEffect(() => {
-    const paramId = searchParams.get('doctor')
-    if (paramId && doctorsCatalog.some((doctor) => doctor.id === paramId)) {
-      setSelectedId(paramId)
+    let active = true
+    getDoctorsData()
+      .then((data) => {
+        if (active) setPageData(data)
+      })
+      .catch(() => {
+        if (active) {
+          setPageData({
+            specialties: fallbackSpecialties,
+            doctors: fallbackDoctors,
+            highlights: fallbackHighlights,
+            visitSteps: fallbackSteps,
+            stats: {
+              total: fallbackDoctors.length,
+              available: fallbackDoctors.filter((doctor) => doctor.available).length,
+              averageRating: 4.8,
+            },
+          })
+        }
+      })
+    return () => {
+      active = false
     }
-  }, [searchParams])
+  }, [])
 
   useEffect(() => {
-    if (!selectedDoctor) return undefined
+    const paramId = searchParams.get('doctor')
+    if (paramId && doctors.some((doctor) => (doctor.slug || doctor.id) === paramId)) {
+      setSelectedId(paramId)
+    }
+  }, [searchParams, doctors])
+
+  useEffect(() => {
+    if (!selectedDoctor && !bookingDoctor && !waitlistDoctor) return undefined
     const previousOverflow = document.body.style.overflow
     document.body.style.overflow = 'hidden'
     const onKeyDown = (event) => {
-      if (event.key === 'Escape') closeProfile()
+      if (event.key === 'Escape') {
+        closeProfile()
+        setBookingDoctor(null)
+        setWaitlistDoctor(null)
+      }
     }
     window.addEventListener('keydown', onKeyDown)
     return () => {
       document.body.style.overflow = previousOverflow
       window.removeEventListener('keydown', onKeyDown)
     }
-  }, [selectedDoctor])
+  }, [selectedDoctor, bookingDoctor, waitlistDoctor])
 
   const filteredDoctors = useMemo(() => {
     const query = searchQuery.trim().toLowerCase()
-    return doctorsCatalog.filter((doctor) => {
-      const matchesSpecialty = activeSpecialty === 'all' || doctor.specialty === activeSpecialty
+    return doctors.filter((doctor) => {
+      const specialtyId = doctor.specialtyId || doctor.specialty
+      const matchesSpecialty = activeSpecialty === 'all' || specialtyId === activeSpecialty
       const matchesAvailability =
         availability === 'all' ||
         (availability === 'available' && doctor.available) ||
@@ -63,9 +111,7 @@ function DoctorsPage() {
         doctor.languages.some((lang) => lang.toLowerCase().includes(query))
       return matchesSpecialty && matchesAvailability && matchesSearch
     })
-  }, [activeSpecialty, availability, searchQuery])
-
-  const availableCount = doctorsCatalog.filter((doctor) => doctor.available).length
+  }, [doctors, activeSpecialty, availability, searchQuery])
 
   const openProfile = (id) => {
     setSelectedId(id)
@@ -75,6 +121,22 @@ function DoctorsPage() {
   const closeProfile = () => {
     setSelectedId(null)
     setSearchParams({}, { replace: true })
+  }
+
+  const openScheduler = (doctor) => {
+    closeProfile()
+    setWaitlistDoctor(null)
+    setBookingDoctor(doctor)
+  }
+
+  const openWaitlist = (doctor) => {
+    closeProfile()
+    setBookingDoctor(null)
+    setWaitlistDoctor(doctor)
+  }
+
+  const scrollToCatalog = () => {
+    document.getElementById('doctor-catalog')?.scrollIntoView({ behavior: 'smooth' })
   }
 
   return (
@@ -102,15 +164,15 @@ function DoctorsPage() {
               </p>
               <div className="doctors-page__hero-stats">
                 <div>
-                  <strong>{doctorsCatalog.length}</strong>
+                  <strong>{pageData.stats?.total ?? doctors.length}</strong>
                   <span>Specialists</span>
                 </div>
                 <div>
-                  <strong>{availableCount}</strong>
+                  <strong>{pageData.stats?.available ?? doctors.filter((doctor) => doctor.available).length}</strong>
                   <span>Accepting patients</span>
                 </div>
                 <div>
-                  <strong>4.8+</strong>
+                  <strong>{pageData.stats?.averageRating ?? '4.8'}+</strong>
                   <span>Average rating</span>
                 </div>
               </div>
@@ -135,7 +197,7 @@ function DoctorsPage() {
                 />
               </div>
               <div className="doctors-page__filters" role="tablist" aria-label="Filter by specialty">
-                {doctorSpecialties.map((specialty) => (
+                {pageData.specialties.map((specialty) => (
                   <button
                     key={specialty.id}
                     type="button"
@@ -168,7 +230,7 @@ function DoctorsPage() {
           </div>
         </section>
 
-        <section className="section doctors-page__catalog">
+        <section id="doctor-catalog" className="section doctors-page__catalog">
           <div className="container">
             {filteredDoctors.length === 0 ? (
               <div className="doctors-page__empty">
@@ -189,57 +251,58 @@ function DoctorsPage() {
               </div>
             ) : (
               <div className="doctors-page__grid">
-                {filteredDoctors.map((doctor, index) => (
-                  <ScrollReveal key={doctor.id} delay={index * 50}>
-                    <article
-                      className="doctors-page__card"
-                      style={{ '--doctor-accent': doctor.accent }}
-                    >
-                      {doctor.featured && <span className="doctors-page__badge">Featured</span>}
-                      <div className="doctors-page__card-top">
-                        <div className="doctors-page__avatar" aria-hidden="true">
-                          {doctor.initials}
+                {filteredDoctors.map((doctor, index) => {
+                  const doctorId = doctor.slug || doctor.id
+                  return (
+                    <ScrollReveal key={doctorId} delay={index * 50}>
+                      <article
+                        className="doctors-page__card"
+                        style={{ '--doctor-accent': doctor.accent }}
+                      >
+                        {doctor.featured && <span className="doctors-page__badge">Featured</span>}
+                        <div className="doctors-page__card-top">
+                          <div className="doctors-page__avatar" aria-hidden="true">
+                            {doctor.initials}
+                          </div>
+                          <span
+                            className={`doctors-page__status ${doctor.available ? 'doctors-page__status--online' : ''}`}
+                          >
+                            {doctor.available ? 'Available' : 'Next week'}
+                          </span>
                         </div>
-                        <span
-                          className={`doctors-page__status ${doctor.available ? 'doctors-page__status--online' : ''}`}
-                        >
-                          {doctor.available ? 'Available' : 'Fully booked'}
-                        </span>
-                      </div>
-                      <h3>{doctor.name}</h3>
-                      <p className="doctors-page__specialty">{doctor.specialtyLabel}</p>
-                      <p className="doctors-page__title">{doctor.title}</p>
-                      <div className="doctors-page__meta">
-                        <span>★ {doctor.rating}</span>
-                        <span>{doctor.experience}</span>
-                      </div>
-                      <p className="doctors-page__bio">{doctor.bio}</p>
-                      <ul className="doctors-page__tags">
-                        {doctor.focusAreas.slice(0, 3).map((area) => (
-                          <li key={area}>{area}</li>
-                        ))}
-                      </ul>
-                      <div className="doctors-page__card-actions">
-                        <button
-                          type="button"
-                          className="btn btn--outline btn--sm btn--full"
-                          onClick={() => openProfile(doctor.id)}
-                        >
-                          View profile
-                        </button>
-                        {doctor.available ? (
-                          <Link to="/#appointment" className="btn btn--primary btn--sm btn--full">
-                            Book visit
-                          </Link>
-                        ) : (
-                          <button type="button" className="btn btn--sm btn--full doctors-page__booked" disabled>
-                            Waitlist only
+                        <h3>{doctor.name}</h3>
+                        <p className="doctors-page__specialty">{doctor.specialtyLabel}</p>
+                        <p className="doctors-page__title">{doctor.title}</p>
+                        <div className="doctors-page__meta">
+                          <span>★ {doctor.rating}</span>
+                          <span>{doctor.experience}</span>
+                        </div>
+                        <p className="doctors-page__bio">{doctor.bio}</p>
+                        <ul className="doctors-page__tags">
+                          {doctor.focusAreas.slice(0, 3).map((area) => (
+                            <li key={area}>{area}</li>
+                          ))}
+                        </ul>
+                        <div className="doctors-page__card-actions">
+                          <button
+                            type="button"
+                            className="btn btn--outline btn--sm btn--full"
+                            onClick={() => openProfile(doctorId)}
+                          >
+                            View profile
                           </button>
-                        )}
-                      </div>
-                    </article>
-                  </ScrollReveal>
-                ))}
+                          <button
+                            type="button"
+                            className="btn btn--primary btn--sm btn--full"
+                            onClick={() => openScheduler(doctor)}
+                          >
+                            {doctor.available ? 'Reserve a slot' : 'Next openings'}
+                          </button>
+                        </div>
+                      </article>
+                    </ScrollReveal>
+                  )
+                })}
               </div>
             )}
           </div>
@@ -252,7 +315,7 @@ function DoctorsPage() {
               <h2>Specialists You Can Trust</h2>
             </ScrollReveal>
             <div className="doctors-page__highlights-grid">
-              {doctorHighlights.map((item, index) => (
+              {pageData.highlights.map((item, index) => (
                 <ScrollReveal key={item.title} delay={index * 80}>
                   <div className="doctors-page__highlight">
                     <span className="doctors-page__highlight-icon">{item.icon}</span>
@@ -270,10 +333,10 @@ function DoctorsPage() {
             <ScrollReveal className="section__header">
               <span className="section__label">Getting Started</span>
               <h2>How to Choose Your Doctor</h2>
-              <p>Find the right specialist and book in a few straightforward steps.</p>
+              <p>Find the right specialist and lock a real clinic slot in a few steps.</p>
             </ScrollReveal>
             <div className="doctors-page__process-grid">
-              {doctorVisitSteps.map((step, index) => (
+              {pageData.visitSteps.map((step, index) => (
                 <ScrollReveal key={step.step} delay={index * 100}>
                   <div className="doctors-page__process-step">
                     <span className="doctors-page__process-num">{step.step}</span>
@@ -292,15 +355,15 @@ function DoctorsPage() {
               <div>
                 <h2>Ready to meet a specialist?</h2>
                 <p>
-                  Book an appointment with an available doctor today. Walk-ins are welcome
-                  for general consultations, but booking saves you time.
+                  Pick a doctor above and reserve a live time slot. Fully booked physicians
+                  still show next-week openings, or you can join their waitlist.
                 </p>
               </div>
               <div className="doctors-page__cta-actions">
-                <Link to="/#appointment" className="btn btn--primary btn--lg">
-                  Book Appointment
+                <button type="button" className="btn btn--primary btn--lg" onClick={scrollToCatalog}>
+                  Choose a doctor
                   <span aria-hidden="true">→</span>
-                </Link>
+                </button>
                 <Link to="/services" className="btn btn--outline">
                   Browse services
                 </Link>
@@ -340,7 +403,7 @@ function DoctorsPage() {
                 <span
                   className={`doctors-page__status ${selectedDoctor.available ? 'doctors-page__status--online' : ''}`}
                 >
-                  {selectedDoctor.available ? 'Available' : 'Fully booked'}
+                  {selectedDoctor.available ? 'Available' : 'Next week'}
                 </span>
               </div>
             </div>
@@ -387,21 +450,34 @@ function DoctorsPage() {
               ))}
             </ul>
             <div className="doctors-page__modal-actions">
-              {selectedDoctor.available ? (
-                <Link to="/#appointment" className="btn btn--primary" onClick={closeProfile}>
-                  Book this visit
-                </Link>
-              ) : (
-                <button type="button" className="btn doctors-page__booked" disabled>
-                  Currently fully booked
-                </button>
-              )}
-              <button type="button" className="btn btn--outline" onClick={closeProfile}>
-                Close
+              <button type="button" className="btn btn--primary" onClick={() => openScheduler(selectedDoctor)}>
+                Reserve a slot
+              </button>
+              <button type="button" className="btn btn--outline" onClick={() => openWaitlist(selectedDoctor)}>
+                Join waitlist
               </button>
             </div>
           </div>
         </div>
+      )}
+
+      {bookingDoctor && (
+        <DoctorVisitScheduler
+          doctor={bookingDoctor}
+          onClose={() => setBookingDoctor(null)}
+          onJoinWaitlist={() => {
+            const doctor = bookingDoctor
+            setBookingDoctor(null)
+            setWaitlistDoctor(doctor)
+          }}
+        />
+      )}
+
+      {waitlistDoctor && (
+        <DoctorWaitlistForm
+          doctor={waitlistDoctor}
+          onClose={() => setWaitlistDoctor(null)}
+        />
       )}
     </>
   )

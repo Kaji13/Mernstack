@@ -39,10 +39,10 @@ export default {
     { icon: '🧪', title: 'Laboratory', description: 'Accurate lab tests with fast turnaround and digital reports.' },
   ],
   doctors: [
-    { name: 'Dr. Sarah Mitchell', specialty: 'Cardiologist', experience: '12 years experience', initials: 'SM', rating: 4.9, available: true },
-    { name: 'Dr. James Chen', specialty: 'Orthopedic Surgeon', experience: '15 years experience', initials: 'JC', rating: 4.8, available: true },
-    { name: 'Dr. Emily Rodriguez', specialty: 'Pediatrician', experience: '10 years experience', initials: 'ER', rating: 5.0, available: false },
-    { name: 'Dr. Michael Okonkwo', specialty: 'General Physician', experience: '18 years experience', initials: 'MO', rating: 4.9, available: true },
+    { slug: 'sarah-mitchell', name: 'Dr. Sarah Mitchell', specialty: 'Cardiologist', experience: '12 years experience', initials: 'SM', rating: 4.9, available: true },
+    { slug: 'james-chen', name: 'Dr. James Chen', specialty: 'Orthopedic Surgeon', experience: '15 years experience', initials: 'JC', rating: 4.8, available: true },
+    { slug: 'emily-rodriguez', name: 'Dr. Emily Rodriguez', specialty: 'Pediatrician', experience: '10 years experience', initials: 'ER', rating: 5.0, available: false },
+    { slug: 'michael-okonkwo', name: 'Dr. Michael Okonkwo', specialty: 'General Physician', experience: '18 years experience', initials: 'MO', rating: 4.9, available: true },
   ],
   statistics: [
     { value: '15,000+', label: 'Patients Treated' },

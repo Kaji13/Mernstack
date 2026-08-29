@@ -18,6 +18,20 @@ const stripMeta = (doc) => {
   return { id: _id?.toString(), ...rest }
 }
 
+const toHomeDoctor = (doc) => {
+  const item = doc.toObject ? doc.toObject() : doc
+  return {
+    id: item.slug ?? item._id?.toString(),
+    slug: item.slug,
+    name: item.name,
+    specialty: item.specialtyLabel || item.specialty,
+    experience: item.experience,
+    initials: item.initials,
+    rating: item.rating,
+    available: item.available,
+  }
+}
+
 const toHomeService = (doc) => {
   const item = doc.toObject ? doc.toObject() : doc
   const { slug, icon, title, description, order } = item
@@ -38,7 +52,7 @@ const getHomeServicesFromSeed = () =>
 const getSeedHomeData = () => ({
   clinic: seedData.clinic,
   services: getHomeServicesFromSeed(),
-  doctors: seedData.doctors,
+    doctors: seedData.doctors.filter((doctor) => doctor.featured !== false).map(toHomeDoctor),
   statistics: seedData.statistics,
   testimonials: seedData.testimonials,
   faqs: seedData.faqs,
@@ -84,7 +98,9 @@ async function getHomeData() {
         }
       : seedData.clinic,
     services: services.length ? services.map(toHomeService) : getHomeServicesFromSeed(),
-    doctors: doctors.length ? doctors.map(stripMeta) : seedData.doctors,
+    doctors: doctors.length
+      ? doctors.map(toHomeDoctor)
+      : seedData.doctors.filter((doctor) => doctor.featured !== false).map(toHomeDoctor),
     statistics: statistics.length ? statistics.map(stripMeta) : seedData.statistics,
     testimonials: testimonials.length ? testimonials.map(stripMeta) : seedData.testimonials,
     faqs: faqs.length ? faqs.map(stripMeta) : seedData.faqs,

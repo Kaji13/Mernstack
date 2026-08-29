@@ -2,13 +2,6 @@ import { Link } from 'react-router-dom'
 import ScrollReveal from '../hooks/ScrollReveal'
 import { useHomeData } from '../context/HomeDataContext'
 
-const doctorSlugs = {
-  'Dr. Sarah Mitchell': 'sarah-mitchell',
-  'Dr. James Chen': 'james-chen',
-  'Dr. Emily Rodriguez': 'emily-rodriguez',
-  'Dr. Michael Okonkwo': 'michael-okonkwo',
-}
-
 function FeaturedDoctors() {
   const { data } = useHomeData()
   const doctors = data.doctors
@@ -41,7 +34,7 @@ function FeaturedDoctors() {
                   <span className="doctor-card__experience">{doctor.experience}</span>
                 </div>
                 <Link
-                  to={doctorSlugs[doctor.name] ? `/doctors?doctor=${doctorSlugs[doctor.name]}` : '/doctors'}
+                  to={doctor.slug || doctor.id ? `/doctors?doctor=${doctor.slug || doctor.id}` : '/doctors'}
                   className="btn btn--outline btn--sm btn--full"
                 >
                   View profile

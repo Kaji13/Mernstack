@@ -645,6 +645,195 @@
   gap: 0.75rem;
 }
 
+.doctors-page__scheduler,
+.doctors-page__waitlist {
+  width: min(760px, 100%);
+}
+
+.doctors-page__scheduler-head {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+  margin-bottom: 1.25rem;
+  padding-right: 2rem;
+}
+
+.doctors-page__scheduler-kicker {
+  margin: 0;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--doctor-accent, var(--accent));
+}
+
+.doctors-page__scheduler-head h2 {
+  margin: 0.15rem 0;
+}
+
+.doctors-page__scheduler-head p {
+  margin: 0;
+  color: var(--text-light);
+}
+
+.doctors-page__notice {
+  background: #fff7ed;
+  border: 1px solid #fdba74;
+  color: #9a3412;
+  border-radius: var(--radius);
+  padding: 0.85rem 1rem;
+  margin-bottom: 1rem;
+  font-size: 0.9375rem;
+}
+
+.doctors-page__scheduler-status,
+.doctors-page__scheduler-error {
+  margin: 0 0 1rem;
+}
+
+.doctors-page__scheduler-error {
+  color: #b91c1c;
+}
+
+.doctors-page__scheduler-form fieldset {
+  border: 0;
+  padding: 0;
+  margin: 0 0 1.25rem;
+}
+
+.doctors-page__scheduler-form legend {
+  font-size: 0.8rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--text-light);
+  margin-bottom: 0.65rem;
+}
+
+.doctors-page__scheduler-form label {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--text-dark);
+  margin-bottom: 0.9rem;
+}
+
+.doctors-page__scheduler-form input,
+.doctors-page__scheduler-form textarea {
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 0.7rem 0.85rem;
+  font: inherit;
+  font-weight: 400;
+}
+
+.doctors-page__pills,
+.doctors-page__slots {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.doctors-page__pill,
+.doctors-page__slot,
+.doctors-page__date {
+  border: 1px solid var(--border);
+  background: var(--white);
+  border-radius: 999px;
+  padding: 0.5rem 0.85rem;
+  cursor: pointer;
+  font: inherit;
+}
+
+.doctors-page__date {
+  border-radius: var(--radius);
+  min-width: 4.6rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.1rem;
+  padding: 0.55rem 0.4rem;
+}
+
+.doctors-page__date span,
+.doctors-page__date em,
+.doctors-page__date small {
+  font-style: normal;
+  font-size: 0.7rem;
+  color: var(--text-light);
+}
+
+.doctors-page__date strong {
+  font-size: 1.15rem;
+}
+
+.doctors-page__dates {
+  display: flex;
+  gap: 0.5rem;
+  overflow-x: auto;
+  padding-bottom: 0.35rem;
+}
+
+.doctors-page__pill--active,
+.doctors-page__slot--active,
+.doctors-page__date--active {
+  background: var(--doctor-accent, var(--primary));
+  border-color: var(--doctor-accent, var(--primary));
+  color: var(--white);
+}
+
+.doctors-page__date--active span,
+.doctors-page__date--active em,
+.doctors-page__date--active small {
+  color: rgba(255, 255, 255, 0.85);
+}
+
+.doctors-page__slot:disabled,
+.doctors-page__date:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+  text-decoration: line-through;
+}
+
+.doctors-page__scheduler-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin-top: 0.5rem;
+}
+
+.doctors-page__confirm {
+  text-align: center;
+  padding: 1.5rem 0.5rem;
+}
+
+.doctors-page__confirm-icon {
+  display: inline-flex;
+  width: 56px;
+  height: 56px;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: #d1fae5;
+  color: #047857;
+  font-size: 1.5rem;
+  margin-bottom: 1rem;
+}
+
+.doctors-page__confirm-ref {
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  color: var(--text-light);
+}
+
+.doctors-page__waitlist-copy {
+  color: var(--text);
+  line-height: 1.7;
+  margin-bottom: 1.25rem;
+}
+
 @media (max-width: 1024px) {
   .doctors-page__grid {
     grid-template-columns: repeat(2, 1fr);
