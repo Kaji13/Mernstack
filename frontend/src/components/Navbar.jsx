@@ -78,6 +78,9 @@ function Navbar() {
               </li>
             ))}
           </ul>
+          <Link to="/login" className="btn btn--outline navbar__auth" onClick={closeMenu}>
+            Log in
+          </Link>
           <Link to="/#appointment" className="btn btn--primary navbar__cta" onClick={closeMenu}>
             Book Appointment
           </Link>

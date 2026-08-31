@@ -3,6 +3,8 @@ import { HomeDataProvider } from './context/HomeDataContext'
 import HomePage from './pages/HomePage'
 import ServicesPage from './pages/ServicesPage'
 import DoctorsPage from './pages/DoctorsPage'
+import LoginPage from './pages/LoginPage'
+import RegisterPage from './pages/RegisterPage'
 import './App.css'
 
 function App() {
@@ -13,6 +15,8 @@ function App() {
           <Route path="/" element={<HomePage />} />
           <Route path="/services" element={<ServicesPage />} />
           <Route path="/doctors" element={<DoctorsPage />} />
+          <Route path="/login" element={<LoginPage />} />
+          <Route path="/register" element={<RegisterPage />} />
         </Routes>
       </BrowserRouter>
     </HomeDataProvider>

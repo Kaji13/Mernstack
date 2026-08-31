@@ -1,0 +1,113 @@
+/* Auth pages (Login / Register) */
+.auth-page {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.auth-page__main {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 3rem 1.5rem 5rem;
+  background: var(--bg-alt);
+}
+
+.auth-page__card {
+  width: min(420px, 100%);
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 2.25rem;
+  box-shadow: var(--shadow-lg);
+}
+
+.auth-page__head {
+  text-align: center;
+  margin-bottom: 1.75rem;
+}
+
+.auth-page__head h1 {
+  margin-bottom: 0.5rem;
+}
+
+.auth-page__head p {
+  color: var(--text-light);
+  font-size: 0.9375rem;
+}
+
+.auth-page__form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.1rem;
+}
+
+.auth-page__form label {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--text-dark);
+}
+
+.auth-page__form input,
+.auth-page__form select {
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 0.7rem 0.85rem;
+  font: inherit;
+  font-weight: 400;
+  color: var(--text-dark);
+  background: var(--white);
+}
+
+.auth-page__form input:focus,
+.auth-page__form select:focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px var(--accent-light);
+}
+
+.auth-page__form select {
+  cursor: pointer;
+}
+
+.auth-page__submit {
+  width: 100%;
+  justify-content: center;
+  margin-top: 0.5rem;
+}
+
+.auth-page__submit:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.auth-page__error {
+  margin: 0;
+  color: #b91c1c;
+  font-size: 0.875rem;
+  background: #fef2f2;
+  border: 1px solid #fecaca;
+  border-radius: var(--radius);
+  padding: 0.7rem 0.85rem;
+}
+
+.auth-page__switch {
+  text-align: center;
+  margin: 1.5rem 0 0;
+  font-size: 0.875rem;
+  color: var(--text-light);
+}
+
+.auth-page__switch a {
+  color: var(--accent-dark);
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.auth-page__switch a:hover {
+  text-decoration: underline;
+}
