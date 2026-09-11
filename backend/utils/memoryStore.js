@@ -72,6 +72,10 @@ function findUserByEmail(email) {
   return users.find((user) => user.email === normalized)
 }
 
+function findUserById(id) {
+  return users.find((user) => String(user._id) === String(id))
+}
+
 module.exports = {
   addAppointment,
   hasBookedSlot,
@@ -79,4 +83,5 @@ module.exports = {
   upsertWaitlist,
   addUser,
   findUserByEmail,
+  findUserById,
 }

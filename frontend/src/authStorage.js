@@ -8,7 +8,14 @@ export function getSession() {
 }
 
 export function saveSession(session) {
-  localStorage.setItem('cms_session', JSON.stringify(session))
+  const normalized = {
+    ...session,
+    token: session.accessToken || session.token,
+    accessToken: session.accessToken || session.token,
+    refreshToken: session.refreshToken || '',
+    user: session.user,
+  }
+  localStorage.setItem('cms_session', JSON.stringify(normalized))
 }
 
 export function clearSession() {

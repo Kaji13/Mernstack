@@ -13,7 +13,7 @@ function RegisterPage() {
     name: '',
     email: '',
     password: '',
-    role: 'editor',
+    role: 'patient',
   })
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
@@ -28,8 +28,13 @@ function RegisterPage() {
     setLoading(true)
     try {
       const data = await registerUser(form)
-      saveSession({ token: data.token, user: data.user })
-      navigate('/')
+      saveSession({
+        token: data.accessToken || data.token,
+        accessToken: data.accessToken || data.token,
+        refreshToken: data.refreshToken,
+        user: data.user,
+      })
+      navigate('/dashboard')
     } catch (err) {
       setError(err.message || 'Registration failed')
     } finally {
@@ -88,8 +93,9 @@ function RegisterPage() {
             <label>
               Role
               <select name="role" value={form.role} onChange={handleChange}>
+                <option value="patient">Patient</option>
+                <option value="doctor">Doctor</option>
                 <option value="editor">Editor</option>
-                <option value="admin">Admin</option>
               </select>
             </label>
 

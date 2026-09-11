@@ -25,6 +25,7 @@ const publicFields = [
   'education',
   'clinicDays',
   'consultation',
+  'consultationFee',
   'accent',
   'bio',
   'focusAreas',
@@ -36,11 +37,17 @@ const publicFields = [
 
 const toPublicDoctor = (doc) => {
   const item = doc.toObject ? doc.toObject() : doc
-  const doctor = { id: item.slug }
+  const doctor = {
+    id: item.slug,
+    _id: item._id,
+    userId: item.userId || null,
+    departmentId: item.departmentId || null,
+  }
   publicFields.forEach((field) => {
     doctor[field] = item[field]
   })
   doctor.specialty = item.specialtyId
+  doctor.consultationFee = Number(item.consultationFee || 0)
   return doctor
 }
 

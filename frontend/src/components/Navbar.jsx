@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { Link, NavLink, useLocation } from 'react-router-dom'
+import { getSession } from '../authStorage'
 
 const navLinks = [
   { to: '/', label: 'Home', end: true },
@@ -15,6 +16,7 @@ function Navbar() {
   const [menuOpen, setMenuOpen] = useState(false)
   const [scrolled, setScrolled] = useState(false)
   const location = useLocation()
+  const session = getSession()
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 24)
@@ -78,8 +80,8 @@ function Navbar() {
               </li>
             ))}
           </ul>
-          <Link to="/login" className="btn btn--outline navbar__auth" onClick={closeMenu}>
-            Log in
+          <Link to={session?.token ? '/dashboard' : '/login'} className="btn btn--outline navbar__auth" onClick={closeMenu}>
+            {session?.token ? 'Dashboard' : 'Log in'}
           </Link>
           <Link to="/#appointment" className="btn btn--primary navbar__cta" onClick={closeMenu}>
             Book Appointment

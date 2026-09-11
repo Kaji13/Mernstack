@@ -23,8 +23,13 @@ function LoginPage() {
     setLoading(true)
     try {
       const data = await loginUser(form)
-      saveSession({ token: data.token, user: data.user })
-      navigate('/')
+      saveSession({
+        token: data.accessToken || data.token,
+        accessToken: data.accessToken || data.token,
+        refreshToken: data.refreshToken,
+        user: data.user,
+      })
+      navigate('/dashboard')
     } catch (err) {
       setError(err.message || 'Login failed')
     } finally {
@@ -68,7 +73,11 @@ function LoginPage() {
               />
             </label>
 
-            {error && <p className="auth-page__error" role="alert">{error}</p>}
+          <Link to="/forgot-password" className="auth-page__switch" style={{ display: 'block', marginTop: '-0.4rem' }}>
+            Forgot password?
+          </Link>
+
+          {error && <p className="auth-page__error" role="alert">{error}</p>}
 
             <button className="btn btn--primary auth-page__submit" type="submit" disabled={loading}>
               {loading ? 'Logging in…' : 'Log in'}

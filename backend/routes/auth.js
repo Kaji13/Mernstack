@@ -1,67 +1,24 @@
 const express = require('express')
-const jwt = require('jsonwebtoken')
-const bcrypt = require('bcryptjs')
-const User = require('../models/User')
-const { isDbConnected } = require('../utils/homeData')
-const memoryStore = require('../utils/memoryStore')
+const { validate } = require('../middleware/validate')
+const { authenticate } = require('../middleware/auth')
+const {
+  registerSchema,
+  loginSchema,
+  refreshSchema,
+  otpSendSchema,
+  otpVerifySchema,
+  forgotPasswordSchema,
+  resetPasswordSchema,
+  changePasswordSchema,
+} = require('../validators/auth')
+const authService = require('../services/authService')
 
 const router = express.Router()
 
-function signToken(user) {
-  return jwt.sign({ id: user._id, email: user.email, role: user.role }, process.env.JWT_SECRET, {
-    expiresIn: '7d',
-  })
-}
-
-function publicUser(user) {
-  return {
-    id: user._id,
-    name: user.name,
-    email: user.email,
-    role: user.role,
-  }
-}
-
-router.post('/register', async (req, res, next) => {
+router.post('/register', validate(registerSchema), async (req, res, next) => {
   try {
-    const { name, email, password, role } = req.body
-
-    if (!name || !email || !password) {
-      return res.status(400).json({ message: 'Name, email, and password are required' })
-    }
-
-    if (password.length < 6) {
-      return res.status(400).json({ message: 'Password must be at least 6 characters' })
-    }
-
-    if (isDbConnected()) {
-      const existing = await User.findOne({ email: String(email).toLowerCase() })
-      if (existing) {
-        return res.status(409).json({ message: 'An account with that email already exists' })
-      }
-
-      const user = await User.create({ name, email, password, role })
-
-      return res.status(201).json({
-        message: 'User registered successfully',
-        token: signToken(user),
-        user: publicUser(user),
-      })
-    }
-
-    const existing = memoryStore.findUserByEmail(email)
-    if (existing) {
-      return res.status(409).json({ message: 'An account with that email already exists' })
-    }
-
-    const salt = await bcrypt.genSalt(10)
-    const user = memoryStore.addUser({ name, email, password: await bcrypt.hash(password, salt), role })
-
-    return res.status(201).json({
-      message: 'User registered successfully',
-      token: signToken(user),
-      user: publicUser(user),
-    })
+    const result = await authService.register(req.body)
+    res.status(201).json({ message: 'User registered successfully', ...result })
   } catch (error) {
     if (error.code === 11000) {
       return res.status(409).json({ message: 'An account with that email already exists' })
@@ -70,35 +27,90 @@ router.post('/register', async (req, res, next) => {
   }
 })
 
-router.post('/login', async (req, res, next) => {
+router.post('/login', validate(loginSchema), async (req, res, next) => {
   try {
-    const { email, password } = req.body
-
-    if (!email || !password) {
-      return res.status(400).json({ message: 'Email and password are required' })
-    }
-
-    const user = isDbConnected()
-      ? await User.findOne({ email: String(email).toLowerCase() })
-      : memoryStore.findUserByEmail(email)
-
-    if (!user) {
-      return res.status(401).json({ message: 'Invalid email or password' })
-    }
-
-    const isMatch = await bcrypt.compare(password, user.password)
-    if (!isMatch) {
-      return res.status(401).json({ message: 'Invalid email or password' })
-    }
-
-    res.json({
-      message: 'Logged in successfully',
-      token: signToken(user),
-      user: publicUser(user),
-    })
+    const result = await authService.login(req.body)
+    res.json({ message: 'Logged in successfully', ...result })
   } catch (error) {
     next(error)
   }
+})
+
+router.post('/refresh', validate(refreshSchema), async (req, res, next) => {
+  try {
+    const result = await authService.refresh(req.body.refreshToken)
+    res.json({ message: 'Token refreshed', ...result })
+  } catch (error) {
+    error.status = error.status || 401
+    next(error)
+  }
+})
+
+router.post('/logout', async (req, res, next) => {
+  try {
+    await authService.logout(req.body?.refreshToken)
+    res.json({ message: 'Logged out' })
+  } catch (error) {
+    next(error)
+  }
+})
+
+router.post('/otp/send', validate(otpSendSchema), async (req, res, next) => {
+  try {
+    const result = await authService.sendOtp(req.body.email, req.body.purpose)
+    res.json(result)
+  } catch (error) {
+    next(error)
+  }
+})
+
+router.post('/otp/verify', validate(otpVerifySchema), async (req, res, next) => {
+  try {
+    const result = await authService.verifyOtp(req.body.email, req.body.purpose, req.body.code)
+    res.json(result)
+  } catch (error) {
+    next(error)
+  }
+})
+
+router.post('/password/forgot', validate(forgotPasswordSchema), async (req, res, next) => {
+  try {
+    const result = await authService.sendOtp(req.body.email, 'reset')
+    res.json({ message: 'If that account exists, an OTP was sent', ...result })
+  } catch (error) {
+    next(error)
+  }
+})
+
+router.post('/password/reset', validate(resetPasswordSchema), async (req, res, next) => {
+  try {
+    const result = await authService.resetPassword(req.body)
+    res.json(result)
+  } catch (error) {
+    next(error)
+  }
+})
+
+router.post('/password/change', authenticate, validate(changePasswordSchema), async (req, res, next) => {
+  try {
+    const result = await authService.changePassword(req.user, req.body)
+    res.json(result)
+  } catch (error) {
+    next(error)
+  }
+})
+
+router.get('/me', authenticate, (req, res) => {
+  res.json({
+    user: {
+      id: req.user._id,
+      name: req.user.name,
+      email: req.user.email,
+      role: req.user.role,
+      phone: req.user.phone,
+      isVerified: req.user.isVerified,
+    },
+  })
 })
 
 module.exports = router

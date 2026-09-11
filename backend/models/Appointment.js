@@ -15,13 +15,24 @@ const appointmentSchema = new mongoose.Schema(
     source: { type: String, enum: ['quick', 'doctor-slot'], default: 'quick' },
     status: {
       type: String,
-      enum: ['pending', 'confirmed', 'cancelled'],
+      enum: ['pending', 'confirmed', 'cancelled', 'completed'],
       default: 'pending',
     },
+    patientId: { type: mongoose.Schema.Types.ObjectId, ref: 'Patient', default: null },
+    doctorId: { type: mongoose.Schema.Types.ObjectId, ref: 'Doctor', default: null },
+    amount: { type: Number, default: 0, min: 0 },
+    paymentStatus: {
+      type: String,
+      enum: ['unpaid', 'pending', 'paid', 'failed', 'refunded'],
+      default: 'unpaid',
+    },
+    billingId: { type: mongoose.Schema.Types.ObjectId, ref: 'Billing', default: null },
   },
   { timestamps: true }
 )
 
 appointmentSchema.index({ doctorSlug: 1, date: 1, timeSlot: 1 })
+appointmentSchema.index({ patientId: 1 })
+appointmentSchema.index({ doctorId: 1 })
 
 module.exports = mongoose.model('Appointment', appointmentSchema)

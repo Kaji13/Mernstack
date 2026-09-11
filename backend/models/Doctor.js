@@ -10,6 +10,8 @@ const visitTypeSchema = new mongoose.Schema(
 
 const doctorSchema = new mongoose.Schema(
   {
+    userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', default: null },
+    departmentId: { type: mongoose.Schema.Types.ObjectId, ref: 'Department', default: null },
     slug: { type: String, required: true, unique: true, trim: true, lowercase: true },
     name: { type: String, required: true, trim: true },
     initials: { type: String, required: true, trim: true },
@@ -26,6 +28,7 @@ const doctorSchema = new mongoose.Schema(
     education: { type: String, required: true, trim: true },
     clinicDays: { type: String, required: true, trim: true },
     consultation: { type: String, required: true, trim: true },
+    consultationFee: { type: Number, default: 0, min: 0 },
     accent: { type: String, required: true, trim: true },
     bio: { type: String, required: true, trim: true },
     focusAreas: [{ type: String, trim: true }],
