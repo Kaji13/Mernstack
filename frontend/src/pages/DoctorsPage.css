@@ -566,6 +566,7 @@
   box-shadow: var(--shadow-xl);
   max-height: calc(100svh - 3rem);
   overflow-y: auto;
+  overflow-x: hidden;
 }
 
 .doctors-page__modal-close {
@@ -774,6 +775,7 @@
   gap: 0.5rem;
   overflow-x: auto;
   padding-bottom: 0.35rem;
+  scrollbar-width: thin;
 }
 
 .doctors-page__pill--active,
@@ -886,5 +888,24 @@
 
   .doctors-page__modal-header {
     flex-direction: column;
+  }
+
+  .doctors-page__modal-overlay {
+    align-items: flex-start;
+    padding: 0.75rem;
+  }
+
+  .doctors-page__modal {
+    width: 100%;
+    max-height: calc(100svh - 1.5rem);
+    padding: 1.25rem;
+  }
+
+  .doctors-page__scheduler-head {
+    align-items: flex-start;
+  }
+
+  .doctors-page__scheduler-actions .btn {
+    flex: 1 1 100%;
   }
 }

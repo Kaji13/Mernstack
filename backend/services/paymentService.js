@@ -140,7 +140,6 @@ async function markPaid(payment) {
   if (payment.appointmentId) {
     await Appointment.findByIdAndUpdate(payment.appointmentId, {
       paymentStatus: 'paid',
-      status: 'confirmed',
     })
   }
   if (payment.billingId) {

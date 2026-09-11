@@ -84,7 +84,9 @@ async function createAppointment(body, actor) {
       timeSlot,
       visitType,
       source: 'doctor-slot',
-      status: amount > 0 ? 'pending' : 'confirmed',
+      // A time slot is held as soon as the request is created. Staff confirm it
+      // only after payment (when required) and their availability check.
+      status: 'pending',
       amount,
       paymentStatus: amount > 0 ? 'pending' : 'unpaid',
     }
@@ -154,4 +156,27 @@ async function listAppointments(actor) {
   return Appointment.find(where).sort({ createdAt: -1 })
 }
 
-module.exports = { createAppointment, listAppointments }
+async function updateAppointmentStatus(id, status, actor) {
+  const appointment = await Appointment.findById(id)
+  if (!appointment) {
+    const error = new Error('Appointment not found')
+    error.status = 404
+    throw error
+  }
+
+  if (actor?.role === 'doctor') {
+    const Doctor = require('../models/Doctor')
+    const profile = await Doctor.findOne({ userId: actor._id })
+    if (!profile || appointment.doctorSlug !== profile.slug) {
+      const error = new Error('You can only update appointments assigned to you')
+      error.status = 403
+      throw error
+    }
+  }
+
+  appointment.status = status
+  await appointment.save()
+  return appointment
+}
+
+module.exports = { createAppointment, listAppointments, updateAppointmentStatus }

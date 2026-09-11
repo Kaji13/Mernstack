@@ -1,12 +1,25 @@
 import { useState } from 'react'
 import ScrollReveal from '../hooks/ScrollReveal'
+import { createAppointment } from '../api'
 
 function AppointmentCTA() {
   const [submitted, setSubmitted] = useState(false)
+  const [error, setError] = useState('')
+  const [submitting, setSubmitting] = useState(false)
 
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault()
-    setSubmitted(true)
+    const form = new FormData(event.currentTarget)
+    setSubmitting(true)
+    setError('')
+    try {
+      await createAppointment(Object.fromEntries(form.entries()))
+      setSubmitted(true)
+    } catch (err) {
+      setError(err.message || 'We could not submit your appointment request.')
+    } finally {
+      setSubmitting(false)
+    }
   }
 
   return (
@@ -90,8 +103,9 @@ function AppointmentCTA() {
                   Message (optional)
                   <textarea name="message" rows="3" placeholder="Describe your symptoms or concerns..." />
                 </label>
-                <button type="submit" className="btn btn--primary btn--full">
-                  Request Appointment
+                {error && <p className="auth-page__error" role="alert">{error}</p>}
+                <button type="submit" className="btn btn--primary btn--full" disabled={submitting}>
+                  {submitting ? 'Sending request…' : 'Request Appointment'}
                 </button>
               </>
             )}

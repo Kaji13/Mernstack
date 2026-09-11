@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { createAppointment, getDoctorSchedule } from '../api'
+import { getSession } from '../authStorage'
 
 const defaultVisitTypes = [
   { id: 'new-patient', label: 'New patient visit' },
@@ -8,6 +9,7 @@ const defaultVisitTypes = [
 ]
 
 function DoctorVisitScheduler({ doctor, onClose, onJoinWaitlist }) {
+  const session = getSession()
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
   const [schedule, setSchedule] = useState(null)
@@ -17,9 +19,9 @@ function DoctorVisitScheduler({ doctor, onClose, onJoinWaitlist }) {
   const [submitting, setSubmitting] = useState(false)
   const [confirmed, setConfirmed] = useState(null)
   const [form, setForm] = useState({
-    name: '',
-    email: '',
-    phone: '',
+    name: session?.user?.name || '',
+    email: session?.user?.email || '',
+    phone: session?.user?.phone || '',
     message: '',
   })
 
@@ -71,11 +73,15 @@ function DoctorVisitScheduler({ doctor, onClose, onJoinWaitlist }) {
         timeSlot: selectedSlot,
         visitType,
       })
+      if (appointment.payment?.paymentUrl) {
+        window.location.assign(appointment.payment.paymentUrl)
+        return
+      }
       setConfirmed({
         date: selectedDate,
         time: selectedDay?.slots.find((slot) => slot.time === selectedSlot)?.label ?? selectedSlot,
         visitType: visitTypes.find((type) => type.id === visitType)?.label ?? visitType,
-        reference: appointment._id?.slice(-8)?.toUpperCase() ?? 'CONFIRMED',
+        reference: appointment._id?.slice(-8)?.toUpperCase() ?? 'REQUESTED',
       })
     } catch (err) {
       setError(err.message)
@@ -101,12 +107,12 @@ function DoctorVisitScheduler({ doctor, onClose, onJoinWaitlist }) {
         {confirmed ? (
           <div className="doctors-page__confirm">
             <span className="doctors-page__confirm-icon" aria-hidden="true">✓</span>
-            <h2 id="doctor-schedule-title">Visit reserved</h2>
+            <h2 id="doctor-schedule-title">Appointment request sent</h2>
             <p>
-              {doctor.name} is holding <strong>{confirmed.date}</strong> at{' '}
-              <strong>{confirmed.time}</strong> for your {confirmed.visitType.toLowerCase()}.
+              Your request for <strong>{confirmed.date}</strong> at <strong>{confirmed.time}</strong>{' '}
+              with {doctor.name} has been received. The clinic will confirm your {confirmed.visitType.toLowerCase()}.
             </p>
-            <p className="doctors-page__confirm-ref">Confirmation {confirmed.reference}</p>
+            <p className="doctors-page__confirm-ref">Request {confirmed.reference}</p>
             <button type="button" className="btn btn--primary" onClick={onClose}>
               Done
             </button>

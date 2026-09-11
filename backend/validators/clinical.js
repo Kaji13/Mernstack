@@ -16,6 +16,17 @@ const createAppointmentSchema = z.object({
   }),
 })
 
+const appointmentIdParam = z.object({
+  params: z.object({ id: objectId }),
+})
+
+const appointmentStatusSchema = z.object({
+  params: z.object({ id: objectId }),
+  body: z.object({
+    status: z.enum(['confirmed', 'cancelled', 'completed']),
+  }),
+})
+
 const medicalRecordSchema = z.object({
   body: z.object({
     patientId: objectId,
@@ -66,6 +77,8 @@ const verifyPaymentSchema = z.object({
 
 module.exports = {
   createAppointmentSchema,
+  appointmentIdParam,
+  appointmentStatusSchema,
   medicalRecordSchema,
   recordIdParam,
   billingSchema,

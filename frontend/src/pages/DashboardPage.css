@@ -55,12 +55,162 @@
   color: var(--text-light);
 }
 
+.dashboard-page__appointments {
+  margin-top: 2rem;
+}
+
+.dashboard-page__section-head h2 {
+  margin: 0;
+  color: var(--primary-dark);
+}
+
+.dashboard-page__section-head p {
+  margin: 0.35rem 0 1rem;
+  color: var(--text-light);
+}
+
+.dashboard-page__appointment-list {
+  display: grid;
+  gap: 0.85rem;
+}
+
+.dashboard-page__appointment {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 1rem 1.25rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--white);
+}
+
+.dashboard-page__appointment p {
+  margin: 0.3rem 0 0;
+  color: var(--text-light);
+}
+
+.dashboard-page__appointment-actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.dashboard-page__status {
+  border-radius: 999px;
+  padding: 0.3rem 0.65rem;
+  color: var(--primary-dark);
+  background: #e8f5f3;
+  font-size: 0.82rem;
+  text-transform: capitalize;
+}
+
+.dashboard-page__status--cancelled {
+  color: #9b2c2c;
+  background: #fff0f0;
+}
+
+.dashboard-page__status--confirmed {
+  color: #1c6b38;
+  background: #ecfdf3;
+}
+
 .chat-page__layout {
   display: grid;
   grid-template-columns: minmax(220px, 280px) 1fr;
   gap: 1rem;
   min-height: 60vh;
 }
+
+.chat-page__heading,
+.chat-page__thread-head,
+.chat-page__contact,
+.chat-page__appointment {
+  display: flex;
+}
+
+.chat-page__heading {
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.chat-page__heading h1,
+.chat-page__thread-head h2,
+.chat-page__panel h2 {
+  margin: 0;
+  color: var(--primary-dark);
+}
+
+.chat-page__heading p,
+.chat-page__thread-head p { margin: 0.35rem 0 0; color: var(--text-light); }
+
+.chat-page__connection {
+  border-radius: 999px;
+  background: #fff7e6;
+  color: #9a6500;
+  padding: 0.35rem 0.7rem;
+  font-size: 0.82rem;
+}
+
+.chat-page__connection--online { background: #ecfdf3; color: #1c6b38; }
+
+.chat-page__contact-list { display: grid; gap: 0.45rem; margin-top: 1rem; }
+
+.chat-page__contact {
+  width: 100%;
+  align-items: center;
+  gap: 0.7rem;
+  padding: 0.7rem;
+  text-align: left;
+  border: 0;
+  border-radius: 0.7rem;
+  background: transparent;
+  color: var(--text);
+  cursor: pointer;
+}
+
+.chat-page__contact:hover,
+.chat-page__contact--active { background: #e8f5f3; }
+
+.chat-page__contact strong,
+.chat-page__contact small { display: block; }
+.chat-page__contact small, .chat-page__muted { color: var(--text-light); }
+
+.chat-page__avatar {
+  display: inline-grid;
+  width: 2.4rem;
+  height: 2.4rem;
+  flex: 0 0 auto;
+  place-items: center;
+  border-radius: 50%;
+  background: var(--primary-dark);
+  color: var(--white);
+  font-weight: 700;
+}
+
+.chat-page__thread { display: flex; flex-direction: column; min-height: 520px; }
+.chat-page__thread-head { align-items: center; gap: 0.7rem; padding-bottom: 1rem; border-bottom: 1px solid var(--border); }
+.chat-page__messages { flex: 1; min-height: 0; max-height: 480px; overflow-y: auto; padding: 1rem 0.15rem; }
+
+.chat-page__bubble {
+  align-self: flex-start;
+  max-width: min(80%, 460px);
+  padding: 0.7rem 0.85rem;
+  border-radius: 0.9rem 0.9rem 0.9rem 0.2rem;
+  background: #f1f5f4;
+}
+
+.chat-page__bubble--mine { align-self: flex-end; border-radius: 0.9rem 0.9rem 0.2rem; background: var(--primary-dark); color: var(--white); }
+.chat-page__bubble p, .chat-page__bubble small { margin: 0; }
+.chat-page__bubble small { display: block; margin-top: 0.25rem; opacity: 0.7; font-size: 0.72rem; }
+
+.chat-page__form { grid-template-columns: 1fr auto; align-items: center; padding-top: 1rem; border-top: 1px solid var(--border); }
+.chat-page__empty { margin: auto; text-align: center; color: var(--text-light); }
+.chat-page__empty span { color: var(--primary); font-size: 2rem; }
 
 .chat-page__panel,
 .chat-page__thread {
@@ -86,5 +236,12 @@
 @media (max-width: 768px) {
   .chat-page__layout {
     grid-template-columns: 1fr;
+  }
+
+  .chat-page__form { grid-template-columns: 1fr; }
+
+  .dashboard-page__appointment {
+    align-items: flex-start;
+    flex-direction: column;
   }
 }

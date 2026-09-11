@@ -3,7 +3,7 @@ import { Link, useNavigate } from 'react-router-dom'
 import Navbar from '../components/Navbar'
 import Footer from '../components/Footer'
 import BackToTop from '../components/BackToTop'
-import { getDashboard, getKhaltiStatus } from '../api'
+import { getAppointments, getDashboard, getKhaltiStatus, updateAppointmentStatus } from '../api'
 import { clearSession, getSession } from '../authStorage'
 import './DashboardPage.css'
 
@@ -13,19 +13,38 @@ function DashboardPage() {
   const [stats, setStats] = useState(null)
   const [khalti, setKhalti] = useState(null)
   const [error, setError] = useState('')
+  const [appointments, setAppointments] = useState([])
+  const [updatingId, setUpdatingId] = useState('')
+  const canManageAppointments = ['admin', 'editor', 'doctor'].includes(session?.user?.role)
 
   useEffect(() => {
     if (!session?.token) {
       navigate('/login')
       return
     }
-    Promise.all([getDashboard(), getKhaltiStatus().catch(() => null)])
-      .then(([dashboard, payment]) => {
+    const requests = [getDashboard(), getKhaltiStatus().catch(() => null)]
+    if (canManageAppointments) requests.push(getAppointments())
+    Promise.all(requests)
+      .then(([dashboard, payment, appointmentList = []]) => {
         setStats(dashboard)
         setKhalti(payment)
+        setAppointments(appointmentList)
       })
       .catch((err) => setError(err.message))
-  }, [navigate, session?.token])
+  }, [canManageAppointments, navigate, session?.token])
+
+  const changeAppointmentStatus = async (id, status) => {
+    setUpdatingId(id)
+    setError('')
+    try {
+      const updated = await updateAppointmentStatus(id, status)
+      setAppointments((current) => current.map((item) => (item._id === id ? updated : item)))
+    } catch (err) {
+      setError(err.message)
+    } finally {
+      setUpdatingId('')
+    }
+  }
 
   if (!session?.token) return null
 
@@ -72,6 +91,46 @@ function DashboardPage() {
 
         {khalti && (
           <p className="dashboard-page__note">{khalti.message}</p>
+        )}
+
+        {canManageAppointments && (
+          <section className="dashboard-page__appointments" aria-labelledby="appointment-requests-title">
+            <div className="dashboard-page__section-head">
+              <div>
+                <h2 id="appointment-requests-title">Appointment requests</h2>
+                <p>Confirm a pending request after checking availability.</p>
+              </div>
+            </div>
+            {appointments.length === 0 ? (
+              <p className="dashboard-page__note">No appointment requests yet.</p>
+            ) : (
+              <div className="dashboard-page__appointment-list">
+                {appointments.map((appointment) => (
+                  <article className="dashboard-page__appointment" key={appointment._id}>
+                    <div>
+                      <strong>{appointment.name}</strong>
+                      <p>{appointment.department} · {new Date(appointment.date).toLocaleDateString()}</p>
+                      <p>{appointment.email} · {appointment.phone}</p>
+                      {appointment.message && <p>{appointment.message}</p>}
+                    </div>
+                    <div className="dashboard-page__appointment-actions">
+                      <span className={`dashboard-page__status dashboard-page__status--${appointment.status}`}>{appointment.status}</span>
+                      {appointment.status === 'pending' && (
+                        <>
+                          <button type="button" className="btn btn--primary" disabled={updatingId === appointment._id} onClick={() => changeAppointmentStatus(appointment._id, 'confirmed')}>
+                            Confirm
+                          </button>
+                          <button type="button" className="btn btn--outline" disabled={updatingId === appointment._id} onClick={() => changeAppointmentStatus(appointment._id, 'cancelled')}>
+                            Decline
+                          </button>
+                        </>
+                      )}
+                    </div>
+                  </article>
+                ))}
+              </div>
+            )}
+          </section>
         )}
       </main>
       <BackToTop />

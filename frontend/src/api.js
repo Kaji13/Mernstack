@@ -95,6 +95,17 @@ export function createAppointment(payload) {
   })
 }
 
+export function getAppointments() {
+  return request('/appointments')
+}
+
+export function updateAppointmentStatus(id, status) {
+  return request(`/appointments/${id}/status`, {
+    method: 'PATCH',
+    body: JSON.stringify({ status }),
+  })
+}
+
 export function registerUser(payload) {
   return request('/auth/register', {
     method: 'POST',
@@ -129,6 +140,10 @@ export function getDashboard() {
 
 export function getChatConversations() {
   return request('/chat/conversations')
+}
+
+export function getChatContacts() {
+  return request('/chat/contacts')
 }
 
 export function getChatMessages(conversationId) {

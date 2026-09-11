@@ -67,7 +67,7 @@ app.use((err, _req, res, _next) => {
   })
 })
 
-attachSockets(server, clientOrigin)
+app.set('io', attachSockets(server, clientOrigin))
 
 server.listen(PORT, '0.0.0.0', () => {
   console.log(`Server running on port ${PORT}`)

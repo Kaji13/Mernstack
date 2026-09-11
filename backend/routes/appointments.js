@@ -1,7 +1,7 @@
 const express = require('express')
-const { optionalAuth, authenticate } = require('../middleware/auth')
+const { optionalAuth, authenticate, authorize } = require('../middleware/auth')
 const { validate } = require('../middleware/validate')
-const { createAppointmentSchema } = require('../validators/clinical')
+const { createAppointmentSchema, appointmentStatusSchema } = require('../validators/clinical')
 const appointmentService = require('../services/appointmentService')
 
 const router = express.Router()
@@ -22,8 +22,32 @@ router.post('/', optionalAuth, validate(createAppointmentSchema), async (req, re
     const payload = appointment.toObject ? appointment.toObject() : appointment
     res.status(201).json({ ...payload, payment: result.payment || null })
   } catch (error) {
+    if (error.code === 11000) {
+      return res.status(409).json({
+        message: 'That slot was just reserved. Please choose another available time.',
+      })
+    }
     next(error)
   }
 })
+
+router.patch(
+  '/:id/status',
+  authenticate,
+  authorize('admin', 'editor', 'doctor'),
+  validate(appointmentStatusSchema),
+  async (req, res, next) => {
+    try {
+      const appointment = await appointmentService.updateAppointmentStatus(
+        req.params.id,
+        req.body.status,
+        req.user
+      )
+      res.json(appointment)
+    } catch (error) {
+      next(error)
+    }
+  }
+)
 
 module.exports = router

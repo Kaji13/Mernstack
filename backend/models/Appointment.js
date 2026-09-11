@@ -31,7 +31,17 @@ const appointmentSchema = new mongoose.Schema(
   { timestamps: true }
 )
 
-appointmentSchema.index({ doctorSlug: 1, date: 1, timeSlot: 1 })
+appointmentSchema.index(
+  { doctorSlug: 1, date: 1, timeSlot: 1 },
+  {
+    unique: true,
+    partialFilterExpression: {
+      doctorSlug: { $type: 'string' },
+      timeSlot: { $type: 'string' },
+      status: { $in: ['pending', 'confirmed'] },
+    },
+  }
+)
 appointmentSchema.index({ patientId: 1 })
 appointmentSchema.index({ doctorId: 1 })
 
