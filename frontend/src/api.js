@@ -167,3 +167,30 @@ export function verifyKhaltiPayment(pidx) {
 export function getKhaltiStatus() {
   return request('/payments/khalti/status')
 }
+
+export function verifyEsewaPayment(transactionUuid) {
+  return request('/payments/esewa/verify', {
+    method: 'POST',
+    body: JSON.stringify({ transactionUuid }),
+  })
+}
+
+export function getEsewaStatus() {
+  return request('/payments/esewa/status')
+}
+
+export function getPatients(params) {
+  return request(`/patients${toQuery(params)}`)
+}
+
+export function getMedicalRecords(params) {
+  return request(`/medical-records${toQuery(params)}`)
+}
+
+export function createMedicalRecord(payload) {
+  return request('/medical-records', { method: 'POST', body: JSON.stringify(payload) })
+}
+
+export function getPaymentHistory(params) {
+  return request(`/payments/history${toQuery(params)}`)
+}

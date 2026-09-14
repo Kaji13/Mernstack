@@ -8,6 +8,19 @@ const { isDbConnected } = require('./homeData')
 const { buildDoctorSchedule, parseDateKey, toDateKey } = require('./slots')
 const memoryStore = require('./memoryStore')
 
+// Used for legacy/seed profiles that predate the consultationFee field.
+// A doctor may still explicitly set consultationFee to 0 for a free clinic.
+const defaultFeesBySpecialty = {
+  cardiology: 2000,
+  orthopedics: 1800,
+  pediatrics: 1500,
+  general: 1000,
+  dental: 1200,
+  eye: 1400,
+  diagnostic: 900,
+  preventive: 1000,
+}
+
 const publicFields = [
   'slug',
   'name',
@@ -47,7 +60,10 @@ const toPublicDoctor = (doc) => {
     doctor[field] = item[field]
   })
   doctor.specialty = item.specialtyId
-  doctor.consultationFee = Number(item.consultationFee || 0)
+  const storedFee = Number(item.consultationFee)
+  doctor.consultationFee = storedFee > 0
+    ? storedFee
+    : (defaultFeesBySpecialty[item.specialtyId] || 1000)
   return doctor
 }
 

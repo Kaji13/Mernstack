@@ -16,6 +16,7 @@ function DoctorVisitScheduler({ doctor, onClose, onJoinWaitlist }) {
   const [selectedDate, setSelectedDate] = useState('')
   const [selectedSlot, setSelectedSlot] = useState('')
   const [visitType, setVisitType] = useState('')
+  const [paymentProvider, setPaymentProvider] = useState('khalti')
   const [submitting, setSubmitting] = useState(false)
   const [confirmed, setConfirmed] = useState(null)
   const [form, setForm] = useState({
@@ -50,6 +51,7 @@ function DoctorVisitScheduler({ doctor, onClose, onJoinWaitlist }) {
 
   const selectedDay = schedule?.days.find((day) => day.date === selectedDate)
   const visitTypes = doctor.visitTypes?.length ? doctor.visitTypes : defaultVisitTypes
+  const consultationFee = Number(doctor.consultationFee || 0)
 
   const handleChange = (event) => {
     const { name, value } = event.target
@@ -72,7 +74,23 @@ function DoctorVisitScheduler({ doctor, onClose, onJoinWaitlist }) {
         doctorSlug: doctor.slug || doctor.id,
         timeSlot: selectedSlot,
         visitType,
+        paymentProvider,
       })
+      if (appointment.payment?.provider === 'esewa' && appointment.payment?.raw?.formData) {
+        const gatewayForm = document.createElement('form')
+        gatewayForm.method = 'POST'
+        gatewayForm.action = appointment.payment.paymentUrl
+        Object.entries(appointment.payment.raw.formData).forEach(([name, value]) => {
+          const input = document.createElement('input')
+          input.type = 'hidden'
+          input.name = name
+          input.value = value
+          gatewayForm.appendChild(input)
+        })
+        document.body.appendChild(gatewayForm)
+        gatewayForm.submit()
+        return
+      }
       if (appointment.payment?.paymentUrl) {
         window.location.assign(appointment.payment.paymentUrl)
         return
@@ -224,9 +242,20 @@ function DoctorVisitScheduler({ doctor, onClose, onJoinWaitlist }) {
                   <textarea name="message" rows="3" value={form.message} onChange={handleChange} placeholder="Symptoms, follow-up notes, or questions…" />
                 </label>
 
+                <fieldset>
+                  <legend>Payment method</legend>
+                  <div className="doctors-page__pills">
+                    <button type="button" className={`doctors-page__pill ${paymentProvider === 'khalti' ? 'doctors-page__pill--active' : ''}`} onClick={() => setPaymentProvider('khalti')}>Khalti</button>
+                    <button type="button" className={`doctors-page__pill ${paymentProvider === 'esewa' ? 'doctors-page__pill--active' : ''}`} onClick={() => setPaymentProvider('esewa')}>eSewa</button>
+                  </div>
+                  {consultationFee > 0 ? (
+                    <p className="doctors-page__scheduler-kicker">You will be sent to {paymentProvider === 'esewa' ? 'eSewa' : 'Khalti'} to pay Rs {consultationFee.toLocaleString()} securely. Your slot is not confirmed until payment completes.</p>
+                  ) : <p className="doctors-page__scheduler-kicker">This is a free clinic visit. No online payment is required.</p>}
+                </fieldset>
+
                 <div className="doctors-page__scheduler-actions">
                   <button type="submit" className="btn btn--primary" disabled={submitting || !selectedSlot}>
-                    {submitting ? 'Reserving slot…' : 'Confirm this visit'}
+                    {submitting ? 'Opening payment…' : consultationFee > 0 ? `Pay Rs ${consultationFee.toLocaleString()} with ${paymentProvider === 'esewa' ? 'eSewa' : 'Khalti'}` : 'Confirm free visit'}
                   </button>
                   {onJoinWaitlist && (
                     <button type="button" className="btn btn--outline" onClick={onJoinWaitlist}>

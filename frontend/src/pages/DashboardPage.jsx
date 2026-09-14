@@ -59,6 +59,7 @@ function DashboardPage() {
           </div>
           <div className="dashboard-page__actions">
             <Link className="btn btn--outline" to="/chat">Patient ↔ doctor chat</Link>
+            {session.user?.role === 'doctor' && <Link className="btn btn--outline" to="/doctor">Open doctor portal</Link>}
             <button
               className="btn btn--primary"
               type="button"

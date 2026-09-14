@@ -21,6 +21,7 @@ const dashboardRoutes = require('./routes/dashboard')
 const chatRoutes = require('./routes/chat')
 const { attachSockets } = require('./sockets/chat')
 const { uploadsDir } = require('./utils/cloudinary')
+const { securityHeaders, sanitizeInput, rateLimit } = require('./middleware/security')
 
 const app = express()
 const server = http.createServer(app)
@@ -33,8 +34,13 @@ app.use(cors({
   origin: clientOrigin,
   credentials: true,
 }))
+app.disable('x-powered-by')
+app.use(securityHeaders)
 app.use(cookieParser())
-app.use(express.json())
+app.use(express.json({ limit: '250kb' }))
+app.use(sanitizeInput)
+app.use('/api', rateLimit())
+app.use('/api/auth', rateLimit({ windowMs: 15 * 60_000, max: 20 }))
 app.use('/uploads', express.static(uploadsDir))
 
 app.get('/api/health', (_req, res) => {

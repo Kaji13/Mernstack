@@ -35,6 +35,26 @@ router.get('/:id', validate(billingIdParam), async (req, res, next) => {
   }
 })
 
+router.get('/:id/invoice', validate(billingIdParam), async (req, res, next) => {
+  try {
+    const invoice = await billingService.getInvoice(req.params.id, req.user)
+    if (req.query.format === 'html') {
+      res.type('html').send(billingService.renderInvoice(invoice))
+      return
+    }
+    res.json(invoice)
+  } catch (error) { next(error) }
+})
+
+router.get('/:id/receipt', validate(billingIdParam), async (req, res, next) => {
+  try {
+    const { payments } = await billingService.getInvoice(req.params.id, req.user)
+    const payment = payments.find((item) => item.status === 'completed')
+    if (!payment) return res.status(404).json({ message: 'No completed payment receipt found' })
+    res.json({ invoiceNo: invoice.bill.invoiceNo, payment })
+  } catch (error) { next(error) }
+})
+
 router.patch('/:id', authorize('admin', 'editor'), validate(billingIdParam), async (req, res, next) => {
   try {
     const bill = await billingService.updateBill(req.params.id, req.body)

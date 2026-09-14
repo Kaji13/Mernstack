@@ -5,7 +5,7 @@ const paymentSchema = new mongoose.Schema(
     appointmentId: { type: mongoose.Schema.Types.ObjectId, ref: 'Appointment', default: null },
     billingId: { type: mongoose.Schema.Types.ObjectId, ref: 'Billing', default: null },
     patientId: { type: mongoose.Schema.Types.ObjectId, ref: 'Patient', default: null },
-    provider: { type: String, enum: ['khalti', 'mock'], default: 'khalti' },
+    provider: { type: String, enum: ['khalti', 'esewa', 'mock'], default: 'khalti' },
     pidx: { type: String, trim: true, index: true },
     amount: { type: Number, required: true, min: 0 },
     status: {

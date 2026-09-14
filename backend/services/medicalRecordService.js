@@ -10,13 +10,29 @@ async function listRecords(query = {}, actor) {
     if (!patient) return []
     where.patientId = patient._id
   }
+  if (actor?.role === 'doctor') {
+    const Doctor = require('../models/Doctor')
+    const doctor = await Doctor.findOne({ userId: actor._id }).lean()
+    if (!doctor) return []
+    where.doctorId = doctor._id
+  }
   return prisma.medicalRecord.findMany(where, {
     sort: { createdAt: -1 },
     populate: ['patientId', 'doctorId', 'appointmentId'],
   })
 }
 
-async function createRecord(data) {
+async function createRecord(data, actor) {
+  if (actor?.role === 'doctor') {
+    const Doctor = require('../models/Doctor')
+    const doctor = await Doctor.findOne({ userId: actor._id }).lean()
+    if (!doctor) {
+      const error = new Error('Doctor profile not found')
+      error.status = 403
+      throw error
+    }
+    data.doctorId = doctor._id
+  }
   return prisma.medicalRecord.create(data)
 }
 

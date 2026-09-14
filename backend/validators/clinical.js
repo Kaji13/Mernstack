@@ -12,6 +12,7 @@ const createAppointmentSchema = z.object({
     doctorSlug: z.string().optional(),
     timeSlot: z.string().optional(),
     visitType: z.string().optional(),
+    paymentProvider: z.enum(['khalti', 'esewa']).optional(),
     patientId: objectId.optional(),
   }),
 })
@@ -75,6 +76,12 @@ const verifyPaymentSchema = z.object({
   }),
 })
 
+const verifyEsewaPaymentSchema = z.object({
+  body: z.object({
+    transactionUuid: z.string().regex(/^[A-Za-z0-9-]+$/, 'transactionUuid is invalid'),
+  }),
+})
+
 module.exports = {
   createAppointmentSchema,
   appointmentIdParam,
@@ -85,4 +92,5 @@ module.exports = {
   billingIdParam,
   initiatePaymentSchema,
   verifyPaymentSchema,
+  verifyEsewaPaymentSchema,
 }

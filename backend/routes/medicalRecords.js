@@ -19,7 +19,7 @@ router.get('/', async (req, res, next) => {
 
 router.post('/', authorize('admin', 'editor', 'doctor'), validate(medicalRecordSchema), async (req, res, next) => {
   try {
-    const record = await medicalRecordService.createRecord(req.body)
+    const record = await medicalRecordService.createRecord(req.body, req.user)
     res.status(201).json(record)
   } catch (error) {
     next(error)

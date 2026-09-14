@@ -40,6 +40,7 @@ async function createAppointment(body, actor) {
     doctorSlug,
     timeSlot,
     visitType,
+    paymentProvider,
     patientId,
   } = body
 
@@ -70,6 +71,14 @@ async function createAppointment(body, actor) {
     }
 
     const amount = Number(doctor.consultationFee || 0)
+    if (amount > 0) {
+      if (!isDbConnected()) {
+        const error = new Error('Online payments are temporarily unavailable. The appointment was not booked.')
+        error.status = 503
+        throw error
+      }
+      paymentService.assertProviderConfigured(paymentProvider || 'khalti')
+    }
     const payload = {
       name,
       email,
@@ -103,7 +112,9 @@ async function createAppointment(body, actor) {
 
     let payment = null
     if (amount > 0) {
-      payment = await paymentService.initiateForAppointment(appointment)
+      payment = paymentProvider === 'esewa'
+        ? await paymentService.initiateEsewaForAppointment(appointment)
+        : await paymentService.initiateForAppointment(appointment)
     }
 
     return { appointment, payment }

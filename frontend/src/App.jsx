@@ -10,6 +10,7 @@ import ResetPasswordPage from './pages/ResetPasswordPage'
 import DashboardPage from './pages/DashboardPage'
 import ChatPage from './pages/ChatPage'
 import PaymentReturnPage from './pages/PaymentReturnPage'
+import DoctorPortalPage from './pages/DoctorPortalPage'
 import './App.css'
 
 function App() {
@@ -28,6 +29,8 @@ function App() {
           <Route path="/chat" element={<ChatPage />} />
           <Route path="/payments/khalti/return" element={<PaymentReturnPage />} />
           <Route path="/payments/mock" element={<PaymentReturnPage />} />
+          <Route path="/payments/esewa/return" element={<PaymentReturnPage />} />
+          <Route path="/doctor" element={<DoctorPortalPage />} />
         </Routes>
       </BrowserRouter>
     </HomeDataProvider>
