@@ -14,6 +14,7 @@ import DoctorPortalPage from './pages/DoctorPortalPage'
 import StaffManagementPage from './pages/StaffManagementPage'
 import PatientManagementPage from './pages/PatientManagementPage'
 import ProtectedRoute from './components/ProtectedRoute'
+import { DoctorProvider } from './context/DoctorContext'
 import './App.css'
 
 function App() {
@@ -23,7 +24,7 @@ function App() {
         <Routes>
           <Route path="/" element={<HomePage />} />
           <Route path="/services" element={<ServicesPage />} />
-          <Route path="/doctors" element={<DoctorsPage />} />
+          <Route path="/doctors" element={<DoctorProvider><DoctorsPage /></DoctorProvider>} />
           <Route path="/login" element={<LoginPage />} />
           <Route path="/register" element={<RegisterPage />} />
           <Route path="/forgot-password" element={<ForgotPasswordPage />} />

@@ -77,6 +77,10 @@ export function getDoctorsData(params) {
   return request(`/doctors${toQuery(params)}`)
 }
 
+export function getDoctorData(slug) {
+  return request(`/doctors/${encodeURIComponent(slug)}`)
+}
+
 export function getDoctorSchedule(slug) {
   return request(`/doctors/${slug}/schedule`)
 }
