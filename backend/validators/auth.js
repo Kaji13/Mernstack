@@ -9,7 +9,6 @@ const registerSchema = z.object({
     email,
     password,
     phone: z.string().optional().default(''),
-    role: z.enum(['admin', 'editor', 'doctor', 'patient']).optional(),
   }),
 })
 

@@ -13,7 +13,7 @@ function RegisterPage() {
     name: '',
     email: '',
     password: '',
-    role: 'patient',
+    phone: '',
   })
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
@@ -49,7 +49,7 @@ function RegisterPage() {
         <div className="auth-page__card">
           <div className="auth-page__head">
             <h1>Create your account</h1>
-            <p>Register to manage clinic content and settings.</p>
+            <p>Create a patient account to book and manage your care.</p>
           </div>
 
           <form className="auth-page__form" onSubmit={handleSubmit}>
@@ -89,15 +89,7 @@ function RegisterPage() {
                 required
               />
             </label>
-
-            <label>
-              Role
-              <select name="role" value={form.role} onChange={handleChange}>
-                <option value="patient">Patient</option>
-                <option value="doctor">Doctor</option>
-                <option value="editor">Editor</option>
-              </select>
-            </label>
+            <label>Phone (optional)<input type="tel" name="phone" value={form.phone} onChange={handleChange} placeholder="Your phone number" /></label>
 
             {error && <p className="auth-page__error" role="alert">{error}</p>}
 

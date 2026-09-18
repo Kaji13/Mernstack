@@ -15,8 +15,6 @@ const {
   publicUser,
 } = require('../utils/tokens')
 
-const PUBLIC_ROLES = new Set(['patient', 'editor', 'doctor'])
-
 function requireDb() {
   if (!isDbConnected()) {
     const error = new Error('Database is required for this operation')
@@ -45,9 +43,7 @@ async function persistRefreshToken(user, refreshToken) {
 
 async function register(payload) {
   const { name, email, password, phone } = payload
-  let role = payload.role || 'patient'
-  if (role === 'admin') role = 'patient'
-  if (!PUBLIC_ROLES.has(role)) role = 'patient'
+  const role = 'patient'
 
   if (!isDbConnected()) {
     const existing = memoryStore.findUserByEmail(email)
@@ -97,6 +93,11 @@ async function login({ email, password }) {
   if (!user || !(await require('bcryptjs').compare(password, user.password))) {
     const error = new Error('Invalid email or password')
     error.status = 401
+    throw error
+  }
+  if (user.isActive === false) {
+    const error = new Error('This account has been deactivated. Contact the clinic administrator.')
+    error.status = 403
     throw error
   }
 

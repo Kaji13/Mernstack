@@ -11,6 +11,8 @@ import DashboardPage from './pages/DashboardPage'
 import ChatPage from './pages/ChatPage'
 import PaymentReturnPage from './pages/PaymentReturnPage'
 import DoctorPortalPage from './pages/DoctorPortalPage'
+import StaffManagementPage from './pages/StaffManagementPage'
+import ProtectedRoute from './components/ProtectedRoute'
 import './App.css'
 
 function App() {
@@ -25,12 +27,13 @@ function App() {
           <Route path="/register" element={<RegisterPage />} />
           <Route path="/forgot-password" element={<ForgotPasswordPage />} />
           <Route path="/reset-password" element={<ResetPasswordPage />} />
-          <Route path="/dashboard" element={<DashboardPage />} />
-          <Route path="/chat" element={<ChatPage />} />
+          <Route path="/dashboard" element={<ProtectedRoute><DashboardPage /></ProtectedRoute>} />
+          <Route path="/chat" element={<ProtectedRoute><ChatPage /></ProtectedRoute>} />
           <Route path="/payments/khalti/return" element={<PaymentReturnPage />} />
           <Route path="/payments/mock" element={<PaymentReturnPage />} />
           <Route path="/payments/esewa/return" element={<PaymentReturnPage />} />
-          <Route path="/doctor" element={<DoctorPortalPage />} />
+          <Route path="/doctor" element={<ProtectedRoute roles={['doctor']}><DoctorPortalPage /></ProtectedRoute>} />
+          <Route path="/staff" element={<ProtectedRoute roles={['admin']}><StaffManagementPage /></ProtectedRoute>} />
         </Routes>
       </BrowserRouter>
     </HomeDataProvider>

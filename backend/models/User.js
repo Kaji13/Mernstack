@@ -12,6 +12,7 @@ const userSchema = new mongoose.Schema(
       default: 'patient',
     },
     isVerified: { type: Boolean, default: false },
+    isActive: { type: Boolean, default: true },
     passwordChangedAt: { type: Date },
   },
   { timestamps: true }

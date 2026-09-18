@@ -134,6 +134,18 @@ export function resetPassword(payload) {
   })
 }
 
+export function getStaff() {
+  return request('/staff')
+}
+
+export function createStaff(payload) {
+  return request('/staff', { method: 'POST', body: JSON.stringify(payload) })
+}
+
+export function updateStaff(id, payload) {
+  return request(`/staff/${id}`, { method: 'PATCH', body: JSON.stringify(payload) })
+}
+
 export function getDashboard() {
   return request('/dashboard')
 }

@@ -19,6 +19,9 @@ async function authenticate(req, res, next) {
     if (!user) {
       return res.status(401).json({ message: 'User not found' })
     }
+    if (user.isActive === false) {
+      return res.status(403).json({ message: 'This account has been deactivated' })
+    }
 
     req.user = user
     req.tokenPayload = payload

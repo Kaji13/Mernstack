@@ -37,6 +37,7 @@ function publicUser(user) {
     role: user.role,
     phone: user.phone || '',
     isVerified: Boolean(user.isVerified),
+    isActive: user.isActive !== false,
   }
 }
 

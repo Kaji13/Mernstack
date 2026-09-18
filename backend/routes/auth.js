@@ -109,6 +109,7 @@ router.get('/me', authenticate, (req, res) => {
       role: req.user.role,
       phone: req.user.phone,
       isVerified: req.user.isVerified,
+      isActive: req.user.isActive !== false,
     },
   })
 })

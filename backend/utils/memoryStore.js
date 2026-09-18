@@ -60,6 +60,7 @@ function addUser(data) {
   const user = {
     _id: createId('user'),
     role: 'editor',
+    isActive: true,
     ...data,
     email,
   }
@@ -76,6 +77,17 @@ function findUserById(id) {
   return users.find((user) => String(user._id) === String(id))
 }
 
+function listUsers() {
+  return [...users]
+}
+
+function updateUser(id, changes) {
+  const user = findUserById(id)
+  if (!user) return null
+  Object.assign(user, changes)
+  return user
+}
+
 module.exports = {
   addAppointment,
   hasBookedSlot,
@@ -84,4 +96,6 @@ module.exports = {
   addUser,
   findUserByEmail,
   findUserById,
+  listUsers,
+  updateUser,
 }
