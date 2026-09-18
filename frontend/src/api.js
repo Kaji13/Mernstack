@@ -207,6 +207,22 @@ export function updatePatient(id, payload) {
   return request(`/patients/${id}`, { method: 'PATCH', body: JSON.stringify(payload) })
 }
 
+export function getDepartments(params) {
+  return request(`/departments${toQuery(params)}`)
+}
+
+export function createDepartment(payload) {
+  return request('/departments', { method: 'POST', body: JSON.stringify(payload) })
+}
+
+export function updateDepartment(id, payload) {
+  return request(`/departments/${id}`, { method: 'PATCH', body: JSON.stringify(payload) })
+}
+
+export function deleteDepartment(id) {
+  return request(`/departments/${id}`, { method: 'DELETE' })
+}
+
 export function getMedicalRecords(params) {
   return request(`/medical-records${toQuery(params)}`)
 }

@@ -48,6 +48,13 @@ async function getDepartment(id) {
 }
 
 async function removeDepartment(id) {
+  const Doctor = require('../models/Doctor')
+  const assignedDoctors = await Doctor.countDocuments({ departmentId: id })
+  if (assignedDoctors) {
+    const error = new Error('This department still has assigned doctors. Move or deactivate them before deleting it.')
+    error.status = 409
+    throw error
+  }
   const department = await prisma.department.delete({ id })
   if (!department) {
     const error = new Error('Department not found')

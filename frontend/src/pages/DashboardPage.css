@@ -81,6 +81,26 @@
 .patient-management__form textarea { min-height: 5.5rem; border: 1px solid var(--border); border-radius: var(--radius); padding: 0.7rem 0.85rem; font: inherit; resize: vertical; }
 .patient-management__wide { grid-column: 1 / -1; }
 
+.department-management__layout { display: grid; grid-template-columns: minmax(280px, 0.9fr) minmax(0, 1.1fr); gap: 1.5rem; align-items: start; }
+.department-management__panel { padding: 1.25rem; border: 1px solid var(--border); border-radius: var(--radius); background: var(--white); }
+.department-management__list { display: grid; gap: 0.65rem; }
+.department-management__item { display: flex; align-items: stretch; border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; }
+.department-management__item--active { border-color: var(--primary); box-shadow: 0 0 0 2px var(--accent-light); }
+.department-management__select { flex: 1; padding: 0.75rem; border: 0; background: var(--white); color: var(--text); font: inherit; text-align: left; cursor: pointer; }
+.department-management__select:hover { background: #f5fbfa; }
+.department-management__select strong, .department-management__select span, .department-management__select small { display: block; }
+.department-management__select span, .department-management__select small { margin-top: 0.2rem; color: var(--text-light); font-size: 0.82rem; }
+.department-management__delete { border: 0; border-left: 1px solid var(--border); padding: 0.5rem 0.7rem; background: #fffafa; color: #9b2c2c; font: inherit; cursor: pointer; }
+.department-management__delete:disabled { cursor: wait; opacity: 0.7; }
+.department-management__feedback { padding: 1rem 0; color: var(--text-light); }
+.department-management__feedback--error { color: #9b2c2c; }
+.department-management__form { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.department-management__form textarea { min-height: 6rem; padding: 0.7rem 0.85rem; border: 1px solid var(--border); border-radius: var(--radius); font: inherit; resize: vertical; }
+.department-management__wide { grid-column: 1 / -1; }
+.department-management__toggle { flex-direction: row !important; align-items: center; grid-column: 1 / -1; }
+.department-management__toggle input { width: auto; }
+.department-management__actions { display: flex; gap: 0.75rem; flex-wrap: wrap; grid-column: 1 / -1; }
+
 .dashboard-page__appointments {
   margin-top: 2rem;
 }
@@ -273,4 +293,5 @@
 
   .staff-management__form { grid-template-columns: 1fr; }
   .patient-management__layout, .patient-management__form { grid-template-columns: 1fr; }
+  .department-management__layout, .department-management__form { grid-template-columns: 1fr; }
 }

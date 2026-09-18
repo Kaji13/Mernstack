@@ -1,7 +1,7 @@
 const express = require('express')
 const { authenticate, authorize, optionalAuth } = require('../middleware/auth')
 const { validate } = require('../middleware/validate')
-const { departmentSchema, departmentIdParam } = require('../validators/clinic')
+const { departmentSchema, departmentIdParam, departmentUpdateSchema } = require('../validators/clinic')
 const departmentService = require('../services/departmentService')
 
 const router = express.Router()
@@ -20,6 +20,7 @@ router.post('/', authenticate, authorize('admin', 'editor'), validate(department
     const department = await departmentService.createDepartment(req.body)
     res.status(201).json(department)
   } catch (error) {
+    if (error.code === 11000) return res.status(409).json({ message: 'Department name or slug already exists' })
     next(error)
   }
 })
@@ -33,11 +34,12 @@ router.get('/:id', validate(departmentIdParam), async (req, res, next) => {
   }
 })
 
-router.patch('/:id', authenticate, authorize('admin', 'editor'), validate(departmentIdParam), async (req, res, next) => {
+router.patch('/:id', authenticate, authorize('admin', 'editor'), validate(departmentUpdateSchema), async (req, res, next) => {
   try {
     const department = await departmentService.updateDepartment(req.params.id, req.body)
     res.json(department)
   } catch (error) {
+    if (error.code === 11000) return res.status(409).json({ message: 'Department name or slug already exists' })
     next(error)
   }
 })

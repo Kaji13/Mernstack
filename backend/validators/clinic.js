@@ -14,6 +14,16 @@ const departmentIdParam = z.object({
   params: z.object({ id: objectId }),
 })
 
+const departmentUpdateSchema = z.object({
+  params: z.object({ id: objectId }),
+  body: z.object({
+    name: z.string().min(2, 'Department name is required').optional(),
+    slug: z.string().min(2).optional(),
+    description: z.string().optional(),
+    isActive: z.boolean().optional(),
+  }).refine((body) => Object.keys(body).length > 0, 'At least one change is required'),
+})
+
 const doctorCreateSchema = z.object({
   body: z.object({
     name: z.string().min(2),
@@ -48,6 +58,7 @@ const doctorIdParam = z.object({
 module.exports = {
   departmentSchema,
   departmentIdParam,
+  departmentUpdateSchema,
   doctorCreateSchema,
   doctorIdParam,
 }
