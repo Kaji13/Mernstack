@@ -195,6 +195,14 @@ export function getPatients(params) {
   return request(`/patients${toQuery(params)}`)
 }
 
+export function createPatient(payload) {
+  return request('/patients', { method: 'POST', body: JSON.stringify(payload) })
+}
+
+export function updatePatient(id, payload) {
+  return request(`/patients/${id}`, { method: 'PATCH', body: JSON.stringify(payload) })
+}
+
 export function getMedicalRecords(params) {
   return request(`/medical-records${toQuery(params)}`)
 }

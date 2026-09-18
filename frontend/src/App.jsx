@@ -12,6 +12,7 @@ import ChatPage from './pages/ChatPage'
 import PaymentReturnPage from './pages/PaymentReturnPage'
 import DoctorPortalPage from './pages/DoctorPortalPage'
 import StaffManagementPage from './pages/StaffManagementPage'
+import PatientManagementPage from './pages/PatientManagementPage'
 import ProtectedRoute from './components/ProtectedRoute'
 import './App.css'
 
@@ -34,6 +35,7 @@ function App() {
           <Route path="/payments/esewa/return" element={<PaymentReturnPage />} />
           <Route path="/doctor" element={<ProtectedRoute roles={['doctor']}><DoctorPortalPage /></ProtectedRoute>} />
           <Route path="/staff" element={<ProtectedRoute roles={['admin']}><StaffManagementPage /></ProtectedRoute>} />
+          <Route path="/patients" element={<ProtectedRoute roles={['admin', 'editor', 'doctor']}><PatientManagementPage /></ProtectedRoute>} />
         </Routes>
       </BrowserRouter>
     </HomeDataProvider>

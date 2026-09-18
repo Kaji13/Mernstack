@@ -20,4 +20,18 @@ const patientIdParam = z.object({
   params: z.object({ id: objectId }),
 })
 
-module.exports = { createPatientSchema, patientIdParam, objectId }
+const updatePatientSchema = z.object({
+  params: z.object({ id: objectId }),
+  body: z.object({
+    fullName: z.string().min(2, 'Full name is required').optional(),
+    email: z.string().email('Valid email is required').optional(),
+    phone: z.string().min(7, 'Phone is required').optional(),
+    dateOfBirth: z.string().optional(),
+    gender: z.enum(['male', 'female', 'other', '']).optional(),
+    address: z.string().optional(),
+    bloodGroup: z.string().optional(),
+    notes: z.string().optional(),
+  }).refine((body) => Object.keys(body).length > 0, 'At least one change is required'),
+})
+
+module.exports = { createPatientSchema, updatePatientSchema, patientIdParam, objectId }
