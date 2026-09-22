@@ -31,8 +31,8 @@ async function createStaff(data) {
     throw error
   }
   const user = isDbConnected()
-    ? await User.create({ ...data, email, isActive: true })
-    : memoryStore.addUser({ ...data, email, password: await bcrypt.hash(data.password, 10), isActive: true })
+    ? await User.create({ ...data, email, isActive: true, isVerified: true })
+    : memoryStore.addUser({ ...data, email, password: await bcrypt.hash(data.password, 10), isActive: true, isVerified: true })
   return publicUser(user)
 }
 

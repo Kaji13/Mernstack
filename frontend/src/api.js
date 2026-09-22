@@ -124,6 +124,20 @@ export function loginUser(payload) {
   })
 }
 
+export function sendVerificationEmail(email) {
+  return request('/auth/otp/send', {
+    method: 'POST',
+    body: JSON.stringify({ email, purpose: 'verify' }),
+  })
+}
+
+export function verifyEmail(email, code) {
+  return request('/auth/otp/verify', {
+    method: 'POST',
+    body: JSON.stringify({ email, purpose: 'verify', code }),
+  })
+}
+
 export function forgotPassword(email) {
   return request('/auth/password/forgot', {
     method: 'POST',

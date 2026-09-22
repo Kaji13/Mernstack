@@ -18,6 +18,7 @@ import { DoctorProvider } from './context/DoctorContext'
 import { DepartmentProvider } from './context/DepartmentContext'
 import DepartmentManagementPage from './pages/DepartmentManagementPage'
 import DoctorOnboardingPage from './pages/DoctorOnboardingPage'
+import VerifyEmail from './components/VerifyEmail'
 import './App.css'
 
 function App() {
@@ -32,6 +33,7 @@ function App() {
           <Route path="/register" element={<RegisterPage />} />
           <Route path="/forgot-password" element={<ForgotPasswordPage />} />
           <Route path="/reset-password" element={<ResetPasswordPage />} />
+          <Route path="/verify-email" element={<VerifyEmail />} />
           <Route path="/dashboard" element={<ProtectedRoute><DashboardPage /></ProtectedRoute>} />
           <Route path="/chat" element={<ProtectedRoute><ChatPage /></ProtectedRoute>} />
           <Route path="/payments/khalti/return" element={<PaymentReturnPage />} />

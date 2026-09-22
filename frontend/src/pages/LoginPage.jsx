@@ -31,6 +31,10 @@ function LoginPage() {
       })
       navigate('/dashboard')
     } catch (err) {
+      if (err.message?.startsWith('Email verification required')) {
+        navigate(`/verify-email?email=${encodeURIComponent(form.email)}`)
+        return
+      }
       setError(err.message || 'Login failed')
     } finally {
       setLoading(false)

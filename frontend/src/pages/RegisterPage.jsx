@@ -4,7 +4,6 @@ import Navbar from '../components/Navbar'
 import Footer from '../components/Footer'
 import BackToTop from '../components/BackToTop'
 import { registerUser } from '../api'
-import { saveSession } from '../authStorage'
 import './AuthPage.css'
 
 function RegisterPage() {
@@ -28,13 +27,11 @@ function RegisterPage() {
     setLoading(true)
     try {
       const data = await registerUser(form)
-      saveSession({
-        token: data.accessToken || data.token,
-        accessToken: data.accessToken || data.token,
-        refreshToken: data.refreshToken,
-        user: data.user,
-      })
-      navigate('/dashboard')
+      if (data.requiresEmailVerification) {
+        navigate(`/verify-email?email=${encodeURIComponent(form.email)}`, { replace: true })
+      } else {
+        navigate('/login', { replace: true })
+      }
     } catch (err) {
       setError(err.message || 'Registration failed')
     } finally {

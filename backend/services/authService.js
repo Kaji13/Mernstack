@@ -59,6 +59,8 @@ async function register(payload) {
       password: await bcrypt.hash(password, 10),
       role,
       phone: phone || '',
+      // The in-memory development fallback has no durable OTP store or mail delivery.
+      isVerified: true,
     })
     return { ...tokenPair(user), refreshToken: signRefreshToken(user) }
   }
@@ -80,9 +82,11 @@ async function register(payload) {
     })
   }
 
-  const tokens = tokenPair(user)
-  await persistRefreshToken(user, tokens.refreshToken)
-  return tokens
+  await sendOtp(user.email, 'verify')
+  return {
+    requiresEmailVerification: true,
+    user: publicUser(user),
+  }
 }
 
 async function login({ email, password }) {
@@ -97,6 +101,11 @@ async function login({ email, password }) {
   }
   if (user.isActive === false) {
     const error = new Error('This account has been deactivated. Contact the clinic administrator.')
+    error.status = 403
+    throw error
+  }
+  if (user.isVerified === false) {
+    const error = new Error('Email verification required. Check your inbox for a code.')
     error.status = 403
     throw error
   }
