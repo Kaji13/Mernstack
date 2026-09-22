@@ -171,6 +171,12 @@
   background: #ecfdf3;
 }
 
+.notification-list { display: grid; gap: 0.8rem; }
+.notification-item { display: flex; justify-content: space-between; align-items: center; gap: 1rem; padding: 1rem 1.25rem; border: 1px solid var(--border); border-radius: var(--radius); background: var(--white); }
+.notification-item--unread { border-color: var(--primary); background: #f5fbfa; }
+.notification-item p, .notification-item small { display: block; margin: 0.3rem 0 0; color: var(--text-light); }
+.notification-item__actions { display: flex; gap: 0.5rem; flex-wrap: wrap; }
+
 .chat-page__layout {
   display: grid;
   grid-template-columns: minmax(220px, 280px) 1fr;
@@ -298,6 +304,8 @@
     align-items: flex-start;
     flex-direction: column;
   }
+
+  .notification-item { align-items: flex-start; flex-direction: column; }
 
   .staff-management__form { grid-template-columns: 1fr; }
   .patient-management__layout, .patient-management__form { grid-template-columns: 1fr; }

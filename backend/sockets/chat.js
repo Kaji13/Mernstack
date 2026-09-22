@@ -2,6 +2,7 @@ const { Server } = require('socket.io')
 const User = require('../models/User')
 const { verifyAccessToken } = require('../utils/tokens')
 const chatService = require('../services/chatService')
+const notificationService = require('../services/notificationService')
 
 function attachSockets(httpServer, origin) {
   const io = new Server(httpServer, {
@@ -43,6 +44,15 @@ function attachSockets(httpServer, origin) {
         })
         io.to(message.conversationId).emit('chat:message', message)
         io.to(String(receiverId)).emit('chat:message', message)
+        const notification = await notificationService.createNotification({
+          recipientId: receiverId,
+          type: 'chat',
+          title: 'New care message',
+          body: `You have a new message from ${socket.user.name}.`,
+          link: '/chat',
+          metadata: { conversationId: message.conversationId, senderId: String(socket.user._id) },
+        })
+        io.to(String(receiverId)).emit('notification:new', notification)
         if (typeof ack === 'function') ack({ ok: true, message })
       } catch (error) {
         if (typeof ack === 'function') ack({ ok: false, message: error.message })

@@ -187,6 +187,18 @@ export function sendChatMessage(payload) {
   })
 }
 
+export function getNotifications() {
+  return request('/notifications')
+}
+
+export function markNotificationRead(id) {
+  return request(`/notifications/${id}/read`, { method: 'PATCH' })
+}
+
+export function markAllNotificationsRead() {
+  return request('/notifications/read-all', { method: 'PATCH' })
+}
+
 export function verifyKhaltiPayment(pidx) {
   return request('/payments/khalti/verify', {
     method: 'POST',

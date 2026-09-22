@@ -1,6 +1,7 @@
 const express = require('express')
 const { authenticate } = require('../middleware/auth')
 const chatService = require('../services/chatService')
+const notificationService = require('../services/notificationService')
 
 const router = express.Router()
 
@@ -49,6 +50,15 @@ router.post('/', async (req, res, next) => {
     const io = req.app.get('io')
     io?.to(message.conversationId).emit('chat:message', message)
     io?.to(String(message.receiverId)).emit('chat:message', message)
+    const notification = await notificationService.createNotification({
+      recipientId: message.receiverId,
+      type: 'chat',
+      title: 'New care message',
+      body: `You have a new message from ${req.user.name}.`,
+      link: '/chat',
+      metadata: { conversationId: message.conversationId, senderId: String(req.user._id) },
+    })
+    io?.to(String(message.receiverId)).emit('notification:new', notification)
     res.status(201).json(message)
   } catch (error) {
     next(error)

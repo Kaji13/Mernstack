@@ -10,6 +10,7 @@ const Billing = require('../models/Billing')
 const Payment = require('../models/Payment')
 const ChatMessage = require('../models/ChatMessage')
 const FileUpload = require('../models/FileUpload')
+const Notification = require('../models/Notification')
 
 function repo(Model) {
   return {
@@ -57,6 +58,7 @@ const prisma = {
   payment: repo(Payment),
   chatMessage: repo(ChatMessage),
   fileUpload: repo(FileUpload),
+  notification: repo(Notification),
 }
 
 module.exports = prisma

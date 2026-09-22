@@ -83,6 +83,7 @@ function Navbar() {
           <Link to={session?.token ? '/dashboard' : '/login'} className="btn btn--outline navbar__auth" onClick={closeMenu}>
             {session?.token ? 'Dashboard' : 'Log in'}
           </Link>
+          {session?.token && <Link to="/notifications" className="btn btn--outline navbar__auth" onClick={closeMenu}>Notifications</Link>}
           <Link to="/#appointment" className="btn btn--primary navbar__cta" onClick={closeMenu}>
             Book Appointment
           </Link>

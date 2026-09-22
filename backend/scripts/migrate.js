@@ -13,6 +13,7 @@ const Billing = require('../models/Billing')
 const Payment = require('../models/Payment')
 const ChatMessage = require('../models/ChatMessage')
 const FileUpload = require('../models/FileUpload')
+const Notification = require('../models/Notification')
 
 const models = [
   User,
@@ -27,6 +28,7 @@ const models = [
   Payment,
   ChatMessage,
   FileUpload,
+  Notification,
 ]
 
 const defaultDepartments = [
