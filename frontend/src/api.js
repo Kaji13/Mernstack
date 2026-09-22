@@ -211,6 +211,14 @@ export function getDepartments(params) {
   return request(`/departments${toQuery(params)}`)
 }
 
+export function getMyDoctorProfile() {
+  return request('/clinic/doctors/me')
+}
+
+export function createDoctorProfile(payload) {
+  return request('/clinic/doctors', { method: 'POST', body: JSON.stringify(payload) })
+}
+
 export function createDepartment(payload) {
   return request('/departments', { method: 'POST', body: JSON.stringify(payload) })
 }

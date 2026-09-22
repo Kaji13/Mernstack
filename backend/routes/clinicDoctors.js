@@ -15,9 +15,21 @@ router.get('/', authenticate, async (req, res, next) => {
   }
 })
 
-router.post('/', authenticate, authorize('admin', 'editor'), validate(doctorCreateSchema), async (req, res, next) => {
+router.get('/me', authenticate, authorize('doctor'), async (req, res, next) => {
   try {
-    const doctor = await doctorService.createDoctor(req.body)
+    const doctor = await doctorService.getDoctorForUser(req.user._id)
+    res.json({ doctor })
+  } catch (error) {
+    next(error)
+  }
+})
+
+router.post('/', authenticate, authorize('admin', 'editor', 'doctor'), validate(doctorCreateSchema), async (req, res, next) => {
+  try {
+    const data = req.user.role === 'doctor'
+      ? { ...req.body, userId: req.user._id, name: req.user.name }
+      : req.body
+    const doctor = await doctorService.createDoctor(data)
     res.status(201).json(doctor)
   } catch (error) {
     next(error)

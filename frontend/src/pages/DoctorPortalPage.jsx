@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import Navbar from '../components/Navbar'
 import Footer from '../components/Footer'
-import { createMedicalRecord, getAppointments, getMedicalRecords, getPatients, updateAppointmentStatus } from '../api'
+import { createMedicalRecord, getAppointments, getMedicalRecords, getMyDoctorProfile, getPatients, updateAppointmentStatus } from '../api'
 import { clearSession, getSession } from '../authStorage'
 import './DashboardPage.css'
 
@@ -14,18 +14,24 @@ function DoctorPortalPage() {
   const [records, setRecords] = useState([])
   const [error, setError] = useState('')
   const [saving, setSaving] = useState(false)
+  const [checkingProfile, setCheckingProfile] = useState(true)
   const [recordForm, setRecordForm] = useState({ patientId: '', diagnosis: '', notes: '', prescriptions: '' })
 
   useEffect(() => {
     if (!session?.token) return navigate('/login')
     if (session.user?.role !== 'doctor') return navigate('/dashboard')
-    Promise.all([getAppointments(), getPatients(), getMedicalRecords()])
-      .then(([nextAppointments, nextPatients, nextRecords]) => {
+    Promise.all([getMyDoctorProfile(), getAppointments(), getPatients(), getMedicalRecords()])
+      .then(([profile, nextAppointments, nextPatients, nextRecords]) => {
+        if (!profile.doctor) {
+          navigate('/doctor/onboarding', { replace: true })
+          return
+        }
         setAppointments(nextAppointments)
         setPatients(nextPatients)
         setRecords(nextRecords)
       })
       .catch((err) => setError(err.message))
+      .finally(() => setCheckingProfile(false))
   }, [navigate, session?.token, session?.user?.role])
 
   const today = new Date().toDateString()
@@ -48,7 +54,7 @@ function DoctorPortalPage() {
     } catch (err) { setError(err.message) } finally { setSaving(false) }
   }
 
-  if (!session?.token || session.user?.role !== 'doctor') return null
+  if (!session?.token || session.user?.role !== 'doctor' || checkingProfile) return null
   return <div className="dashboard-page"><Navbar /><main className="dashboard-page__main container">
     <div className="dashboard-page__head"><div><h1>Doctor portal</h1><p>Welcome, Dr. {session.user?.name}. Manage your day, patients, and clinical notes.</p></div><div className="dashboard-page__actions"><Link className="btn btn--outline" to="/patients">Manage patients</Link><Link className="btn btn--outline" to="/chat">Messages</Link><button className="btn btn--primary" onClick={() => { clearSession(); navigate('/login') }}>Log out</button></div></div>
     {error && <p className="auth-page__error">{error}</p>}

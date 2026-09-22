@@ -37,6 +37,10 @@ async function getDoctor(id) {
   return doctor
 }
 
+async function getDoctorForUser(userId) {
+  return prisma.doctor.findUnique({ userId })
+}
+
 async function createDoctor(data) {
   const slug = data.slug || slugify(data.name)
   const existing = await Doctor.findOne({ slug })
@@ -44,6 +48,14 @@ async function createDoctor(data) {
     const error = new Error('A doctor with that slug already exists')
     error.status = 409
     throw error
+  }
+  if (data.userId) {
+    const existingProfile = await Doctor.findOne({ userId: data.userId })
+    if (existingProfile) {
+      const error = new Error('This doctor account already has a profile')
+      error.status = 409
+      throw error
+    }
   }
   return prisma.doctor.create({
     ...data,
@@ -78,4 +90,4 @@ async function removeDoctor(id) {
   return { message: 'Doctor removed' }
 }
 
-module.exports = { listDoctors, getDoctor, createDoctor, updateDoctor, removeDoctor }
+module.exports = { listDoctors, getDoctor, getDoctorForUser, createDoctor, updateDoctor, removeDoctor }

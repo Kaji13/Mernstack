@@ -101,6 +101,14 @@
 .department-management__toggle input { width: auto; }
 .department-management__actions { display: flex; gap: 0.75rem; flex-wrap: wrap; grid-column: 1 / -1; }
 
+.doctor-onboarding__form { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); max-width: 900px; }
+.doctor-onboarding__form textarea { min-height: 6rem; border: 1px solid var(--border); border-radius: var(--radius); padding: 0.7rem 0.85rem; font: inherit; resize: vertical; }
+.doctor-onboarding__wide { grid-column: 1 / -1; }
+.doctor-onboarding__fieldset { grid-column: 1 / -1; display: grid; grid-template-columns: repeat(4, max-content); gap: 0.75rem 1rem; border: 0; padding: 0; margin: 0; }
+.doctor-onboarding__fieldset legend { grid-column: 1 / -1; font-size: 0.875rem; font-weight: 600; color: var(--text-dark); }
+.doctor-onboarding__checkbox { flex-direction: row !important; align-items: center; gap: 0.45rem !important; }
+.doctor-onboarding__checkbox input { width: auto; }
+
 .dashboard-page__appointments {
   margin-top: 2rem;
 }
@@ -294,4 +302,6 @@
   .staff-management__form { grid-template-columns: 1fr; }
   .patient-management__layout, .patient-management__form { grid-template-columns: 1fr; }
   .department-management__layout, .department-management__form { grid-template-columns: 1fr; }
+  .doctor-onboarding__form { grid-template-columns: 1fr; }
+  .doctor-onboarding__fieldset { grid-template-columns: repeat(2, max-content); }
 }

@@ -17,6 +17,7 @@ import ProtectedRoute from './components/ProtectedRoute'
 import { DoctorProvider } from './context/DoctorContext'
 import { DepartmentProvider } from './context/DepartmentContext'
 import DepartmentManagementPage from './pages/DepartmentManagementPage'
+import DoctorOnboardingPage from './pages/DoctorOnboardingPage'
 import './App.css'
 
 function App() {
@@ -37,6 +38,7 @@ function App() {
           <Route path="/payments/mock" element={<PaymentReturnPage />} />
           <Route path="/payments/esewa/return" element={<PaymentReturnPage />} />
           <Route path="/doctor" element={<ProtectedRoute roles={['doctor']}><DoctorPortalPage /></ProtectedRoute>} />
+          <Route path="/doctor/onboarding" element={<ProtectedRoute roles={['doctor']}><DoctorOnboardingPage /></ProtectedRoute>} />
           <Route path="/staff" element={<ProtectedRoute roles={['admin']}><StaffManagementPage /></ProtectedRoute>} />
           <Route path="/patients" element={<ProtectedRoute roles={['admin', 'editor', 'doctor']}><PatientManagementPage /></ProtectedRoute>} />
           <Route path="/departments" element={<ProtectedRoute roles={['admin', 'editor']}><DepartmentProvider><DepartmentManagementPage /></DepartmentProvider></ProtectedRoute>} />
