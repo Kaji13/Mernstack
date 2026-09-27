@@ -268,3 +268,22 @@ export function createMedicalRecord(payload) {
 export function getPaymentHistory(params) {
   return request(`/payments/history${toQuery(params)}`)
 }
+
+export function getBills(params) {
+  return request(`/billing${toQuery(params)}`)
+}
+
+export function createBill(payload) {
+  return request('/billing', { method: 'POST', body: JSON.stringify(payload) })
+}
+
+export function getBillInvoice(id) {
+  return request(`/billing/${encodeURIComponent(id)}/invoice`)
+}
+
+export function initiateBillingPayment(provider, billingId, returnUrl) {
+  return request(`/payments/${provider}/initiate`, {
+    method: 'POST',
+    body: JSON.stringify({ billingId, returnUrl }),
+  })
+}

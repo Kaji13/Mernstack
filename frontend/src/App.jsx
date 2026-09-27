@@ -20,6 +20,7 @@ import DepartmentManagementPage from './pages/DepartmentManagementPage'
 import DoctorOnboardingPage from './pages/DoctorOnboardingPage'
 import VerifyEmail from './components/VerifyEmail'
 import NotificationsPage from './pages/NotificationsPage'
+import BillingPage from './pages/BillingPage'
 import './App.css'
 
 function App() {
@@ -38,6 +39,7 @@ function App() {
           <Route path="/dashboard" element={<ProtectedRoute><DashboardPage /></ProtectedRoute>} />
           <Route path="/chat" element={<ProtectedRoute><ChatPage /></ProtectedRoute>} />
           <Route path="/notifications" element={<ProtectedRoute><NotificationsPage /></ProtectedRoute>} />
+          <Route path="/billing" element={<ProtectedRoute roles={['admin', 'editor', 'doctor']}><BillingPage /></ProtectedRoute>} />
           <Route path="/payments/khalti/return" element={<PaymentReturnPage />} />
           <Route path="/payments/mock" element={<PaymentReturnPage />} />
           <Route path="/payments/esewa/return" element={<PaymentReturnPage />} />

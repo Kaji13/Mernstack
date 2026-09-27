@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { useSearchParams } from 'react-router-dom'
+import { Link, useSearchParams } from 'react-router-dom'
 import Navbar from '../components/Navbar'
 import Footer from '../components/Footer'
 import { verifyKhaltiPayment, verifyEsewaPayment } from '../api'
@@ -11,6 +11,8 @@ function PaymentReturnPage() {
   const pidx = params.get('pidx')
   const transactionUuid = params.get('transaction_uuid')
   const isEsewa = Boolean(transactionUuid)
+  const requestedReturnTo = params.get('return_to') || sessionStorage.getItem('billing_return_to')
+  const returnTo = requestedReturnTo?.startsWith('/billing?invoice=') ? requestedReturnTo : ''
 
   useEffect(() => {
     if (!pidx && !transactionUuid) {
@@ -30,6 +32,7 @@ function PaymentReturnPage() {
           <div className="auth-page__head">
             <h1>{isEsewa ? 'eSewa' : 'Khalti'} payment</h1>
             <p>{status}</p>
+            {returnTo && <Link className="btn btn--outline" to={returnTo} onClick={() => sessionStorage.removeItem('billing_return_to')}>Return to invoice</Link>}
           </div>
         </div>
       </main>
