@@ -20,9 +20,17 @@ function ChatPage() {
   const [loading, setLoading] = useState(true)
   const [sending, setSending] = useState(false)
   const [isConnected, setIsConnected] = useState(false)
+  const [connectionChecked, setConnectionChecked] = useState(false)
+  const [contactQuery, setContactQuery] = useState('')
+  const [threadLoading, setThreadLoading] = useState(false)
   const messagesEndRef = useRef(null)
+  const socketRef = useRef(null)
+  const contactsRef = useRef([])
+  const activeConversationRef = useRef('')
 
   const socketUrl = useMemo(() => import.meta.env.VITE_SOCKET_URL || window.location.origin, [])
+
+  useEffect(() => { contactsRef.current = contacts }, [contacts])
 
   useEffect(() => {
     if (!session?.token) {
@@ -41,10 +49,14 @@ function ChatPage() {
       auth: { token: session.accessToken || session.token },
       transports: ['websocket', 'polling'],
     })
-    socket.on('connect', () => setIsConnected(true))
-    socket.on('disconnect', () => setIsConnected(false))
+    socketRef.current = socket
+    socket.on('connect', () => { setIsConnected(true); setConnectionChecked(true) })
+    socket.on('disconnect', () => { setIsConnected(false); setConnectionChecked(true) })
+    socket.on('connect_error', () => { setIsConnected(false); setConnectionChecked(true) })
     socket.on('chat:message', (message) => {
-      setMessages((prev) => prev.some((item) => item._id === message._id) ? prev : [...prev, message])
+      if (message.conversationId === activeConversationRef.current) {
+        setMessages((prev) => prev.some((item) => item._id === message._id) ? prev : [...prev, message])
+      }
       setConversations((prev) => {
         const contactId = String(message.senderId) === String(session.user?.id) ? message.receiverId : message.senderId
         const existing = prev.find((item) => item.conversationId === message.conversationId)
@@ -52,12 +64,12 @@ function ChatPage() {
           conversationId: message.conversationId,
           lastMessage: message.text,
           updatedAt: message.createdAt,
-          contact: existing?.contact || contacts.find((item) => String(item.id) === String(contactId)) || null,
+          contact: existing?.contact || contactsRef.current.find((item) => String(item.id) === String(contactId)) || null,
         }
         return [next, ...prev.filter((item) => item.conversationId !== message.conversationId)]
       })
     })
-    return () => socket.disconnect()
+    return () => { socketRef.current = null; socket.disconnect() }
   }, [navigate, session?.token, session?.accessToken, session?.user?.id, socketUrl])
 
   useEffect(() => {
@@ -66,14 +78,28 @@ function ChatPage() {
 
   const openConversation = async (contact) => {
     const conversationId = [String(session.user.id), String(contact.id)].sort().join(':')
+    if (activeConversationRef.current && activeConversationRef.current !== conversationId) {
+      socketRef.current?.emit('chat:leave', { receiverId: activeContact?.id })
+    }
+    activeConversationRef.current = conversationId
+    socketRef.current?.emit('chat:join', { receiverId: contact.id })
     setActiveContact(contact)
     setMessages([])
     setError('')
+    setThreadLoading(true)
     try {
       const data = await getChatMessages(conversationId)
-      setMessages(data)
+      if (activeConversationRef.current === conversationId) {
+        setMessages((current) => {
+          const merged = new Map(data.map((item) => [item._id, item]))
+          current.forEach((item) => merged.set(item._id, item))
+          return [...merged.values()].sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt))
+        })
+      }
     } catch (err) {
-      setError(err.message)
+      if (activeConversationRef.current === conversationId) setError(err.message)
+    } finally {
+      if (activeConversationRef.current === conversationId) setThreadLoading(false)
     }
   }
 
@@ -83,7 +109,17 @@ function ChatPage() {
     setSending(true)
     setError('')
     try {
-      const message = await sendChatMessage({ receiverId: activeContact.id, text: text.trim() })
+      const payload = { receiverId: activeContact.id, text: text.trim() }
+      const socket = socketRef.current
+      const message = socket?.connected
+        ? await new Promise((resolve, reject) => {
+            socket.timeout(8000).emit('chat:message', payload, (timeoutError, result) => {
+              if (timeoutError) return reject(new Error('Message could not be sent. Please try again.'))
+              if (!result?.ok) return reject(new Error(result?.message || 'Message could not be sent.'))
+              resolve(result.message)
+            })
+          })
+        : await sendChatMessage(payload)
       setMessages((prev) => prev.some((item) => item._id === message._id) ? prev : [...prev, message])
       setText('')
     } catch (err) {
@@ -95,6 +131,7 @@ function ChatPage() {
 
   const people = [...conversations.map((item) => item.contact).filter(Boolean), ...contacts]
     .filter((person, index, all) => all.findIndex((candidate) => String(candidate.id) === String(person.id)) === index)
+    .filter((person) => `${person.name} ${person.subtitle || person.role}`.toLowerCase().includes(contactQuery.trim().toLowerCase()))
 
   return (
     <div className="dashboard-page">
@@ -106,13 +143,14 @@ function ChatPage() {
             <p>Private messages between patients and their care team.</p>
           </div>
           <span className={`chat-page__connection ${isConnected ? 'chat-page__connection--online' : ''}`}>
-            {isConnected ? 'Live' : 'Connecting'}
+            {isConnected ? 'Live' : connectionChecked ? 'Offline' : 'Connecting'}
           </span>
         </div>
         {error && <p className="auth-page__error">{error}</p>}
         <div className="chat-page__layout">
           <aside className="chat-page__panel">
-            <h2>{session.user?.role === 'patient' ? 'Your doctors' : 'Your patients'}</h2>
+            <div className="chat-page__panel-head"><h2>{session.user?.role === 'patient' ? 'Your doctors' : 'Your patients'}</h2><span>{people.length}</span></div>
+            <label className="chat-page__search"><span className="sr-only">Search contacts</span><input value={contactQuery} onChange={(event) => setContactQuery(event.target.value)} placeholder="Search people" /></label>
             {loading && <p className="chat-page__muted">Loading conversations…</p>}
             {!loading && people.length === 0 && <p className="chat-page__muted">No contacts are available yet.</p>}
             <div className="chat-page__contact-list">
@@ -142,10 +180,12 @@ function ChatPage() {
               <>
                 <header className="chat-page__thread-head">
                   <span className="chat-page__avatar">{activeContact.name?.slice(0, 1).toUpperCase()}</span>
-                  <div><h2>{activeContact.name}</h2><p>{activeContact.subtitle || activeContact.role}</p></div>
+                  <div className="chat-page__thread-person"><h2>{activeContact.name}</h2><p>{activeContact.subtitle || activeContact.role}</p></div>
+                  <span className={`chat-page__thread-state ${isConnected ? 'chat-page__thread-state--online' : ''}`}>{isConnected ? 'Live connection' : 'Offline · sending still works'}</span>
                 </header>
                 <div className="chat-page__messages" aria-live="polite">
-                  {messages.length === 0 && <p className="chat-page__muted">No messages yet. Send a message to begin.</p>}
+                  {threadLoading && <p className="chat-page__muted">Loading messages…</p>}
+                  {!threadLoading && messages.length === 0 && <p className="chat-page__muted">No messages yet. Send a message to begin.</p>}
                   {messages.map((item) => {
                     const mine = String(item.senderId) === String(session.user?.id)
                     return <div key={item._id} className={`chat-page__bubble ${mine ? 'chat-page__bubble--mine' : ''}`}><p>{item.text}</p><small>{new Date(item.createdAt).toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' })}</small></div>
@@ -153,8 +193,8 @@ function ChatPage() {
                   <div ref={messagesEndRef} />
                 </div>
                 <form className="chat-page__form" onSubmit={handleSend}>
-                  <input placeholder={`Message ${activeContact.name}`} value={text} onChange={(event) => setText(event.target.value)} maxLength="2000" required />
-                  <button className="btn btn--primary" type="submit" disabled={sending}>{sending ? 'Sending…' : 'Send'}</button>
+                  <input aria-label={`Message ${activeContact.name}`} placeholder="Write a message…" value={text} onChange={(event) => setText(event.target.value)} maxLength="2000" required />
+                  <button className="btn btn--primary" type="submit" disabled={sending || !text.trim()}>{sending ? 'Sending…' : 'Send'}</button>
                 </form>
               </>
             )}

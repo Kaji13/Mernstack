@@ -29,8 +29,15 @@ async function saveMessage({ conversationId, senderId, receiverId, senderRole, t
     throw error
   }
 
+  const canonicalConversationId = conversationIdFor(senderId, receiverId)
+  if (conversationId && conversationId !== canonicalConversationId) {
+    const error = new Error('Conversation does not match the selected participants')
+    error.status = 400
+    throw error
+  }
+
   return ChatMessage.create({
-    conversationId: conversationId || conversationIdFor(senderId, receiverId),
+    conversationId: canonicalConversationId,
     senderId,
     receiverId,
     senderRole,

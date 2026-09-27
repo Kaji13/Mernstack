@@ -26,17 +26,29 @@ function attachSockets(httpServer, origin) {
   io.on('connection', (socket) => {
     socket.join(String(socket.user._id))
 
-    socket.on('chat:join', ({ conversationId, receiverId }) => {
-      const room = conversationId || chatService.conversationIdFor(socket.user._id, receiverId)
-      if (room) socket.join(room)
+    socket.on('chat:join', ({ receiverId } = {}, ack) => {
+      if (!receiverId) return ack?.({ ok: false, message: 'receiverId is required' })
+      const room = chatService.conversationIdFor(socket.user._id, receiverId)
+      User.findById(receiverId).select('_id role').then((receiver) => {
+        const allowed = receiver && (
+          (socket.user.role === 'patient' && receiver.role === 'doctor') ||
+          (socket.user.role === 'doctor' && receiver.role === 'patient')
+        )
+        if (!allowed) return ack?.({ ok: false, message: 'Chat is available only between a patient and a doctor' })
+        socket.join(room)
+        ack?.({ ok: true, conversationId: room })
+      }).catch(() => ack?.({ ok: false, message: 'Unable to join conversation' }))
+    })
+
+    socket.on('chat:leave', ({ receiverId } = {}) => {
+      if (receiverId) socket.leave(chatService.conversationIdFor(socket.user._id, receiverId))
     })
 
     socket.on('chat:message', async (payload, ack) => {
       try {
-        const { receiverId, text, conversationId } = payload || {}
+        const { receiverId, text } = payload || {}
         if (!receiverId || !text) throw new Error('receiverId and text are required')
         const message = await chatService.saveMessage({
-          conversationId,
           senderId: socket.user._id,
           receiverId,
           senderRole: socket.user.role,
