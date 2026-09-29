@@ -3,7 +3,8 @@ import { Link, useSearchParams } from 'react-router-dom'
 import Navbar from '../components/Navbar'
 import Footer from '../components/Footer'
 import BackToTop from '../components/BackToTop'
-import { createBill, getBillInvoice, getBills, getPatients, getKhaltiStatus, getEsewaStatus, initiateBillingPayment } from '../api'
+import { createBill, deletePayment, getBillInvoice, getBills, getPatients, getKhaltiStatus, getEsewaStatus, initiateBillingPayment } from '../api'
+import { getSession } from '../authStorage'
 import './DashboardPage.css'
 
 const emptyItem = () => ({ description: '', amount: '', quantity: '1' })
@@ -29,6 +30,7 @@ function BillingPage() {
   const [detailLoading, setDetailLoading] = useState(false)
   const [saving, setSaving] = useState(false)
   const [processing, setProcessing] = useState('')
+  const [deletingPaymentId, setDeletingPaymentId] = useState('')
   const [error, setError] = useState('')
   const [notice, setNotice] = useState('')
 
@@ -141,8 +143,25 @@ function BillingPage() {
     }
   }
 
+  async function removePayment(payment) {
+    if (payment.status !== 'failed' || !window.confirm('Delete this failed payment attempt?')) return
+    setDeletingPaymentId(payment._id)
+    setError(''); setNotice('')
+    try {
+      await deletePayment(payment._id)
+      const [updatedInvoice] = await Promise.all([getBillInvoice(selectedId), loadBills()])
+      setInvoice(updatedInvoice)
+      setNotice('Failed payment attempt deleted.')
+    } catch (err) {
+      setError(err.message || 'Unable to delete this payment attempt.')
+    } finally {
+      setDeletingPaymentId('')
+    }
+  }
+
   const totalOutstanding = bills.filter((bill) => bill.status === 'unpaid').reduce((sum, bill) => sum + Number(bill.total || 0), 0)
   const completedPayments = invoice?.payments?.filter((payment) => payment.status === 'completed') || []
+  const canDeleteFailedPayments = getSession()?.user?.role === 'admin'
 
   return (
     <div className="dashboard-page">
@@ -210,7 +229,7 @@ function BillingPage() {
               {selectedBill.status === 'unpaid' && <div className="billing-page__payment"><h3>Process payment</h3><p>Choose a configured payment provider to continue to its secure checkout.</p><div className="billing-page__payment-actions">
                 {['khalti', 'esewa'].map((provider) => <button type="button" className="btn btn--primary" key={provider} disabled={!providerStatus[provider] || Boolean(processing)} onClick={() => processPayment(provider)}>{processing === provider ? 'Connecting…' : `Pay with ${provider === 'khalti' ? 'Khalti' : 'eSewa'}`}</button>)}
               </div>{!providerStatus.khalti && !providerStatus.esewa && <small className="billing-page__provider-note">Payment providers are not configured. You can still review and print this invoice.</small>}</div>}
-              <div className="billing-page__payments"><h3>Payment history <span>{invoice?.payments?.length || 0}</span></h3>{invoice?.payments?.length ? invoice.payments.map((payment) => <div className="billing-page__payment-row" key={payment._id}><span><strong>{payment.provider}</strong><small>{new Date(payment.createdAt).toLocaleString()}{payment.transactionId ? ` · ${payment.transactionId}` : ''}</small></span><span>{currency(payment.amount)}<small className={`billing-page__status billing-page__status--${payment.status}`}>{payment.status}</small></span></div>) : <p className="dashboard-page__note">No payments have been recorded for this invoice.</p>}</div>
+              <div className="billing-page__payments"><h3>Payment history <span>{invoice?.payments?.length || 0}</span></h3>{invoice?.payments?.length ? invoice.payments.map((payment) => <div className="billing-page__payment-row" key={payment._id}><span><strong>{payment.provider}</strong><small>{new Date(payment.createdAt).toLocaleString()}{payment.transactionId ? ` · ${payment.transactionId}` : ''}</small></span><span className="billing-page__payment-value">{currency(payment.amount)}<small className={`billing-page__status billing-page__status--${payment.status}`}>{payment.status}</small>{canDeleteFailedPayments && payment.status === 'failed' && <button type="button" className="billing-page__delete-payment" disabled={deletingPaymentId === payment._id} onClick={() => removePayment(payment)}>{deletingPaymentId === payment._id ? 'Deleting…' : 'Delete attempt'}</button>}</span></div>) : <p className="dashboard-page__note">No payments have been recorded for this invoice.</p>}</div>
               {completedPayments.length > 0 && <p className="billing-page__paid-note">{currency(completedPayments.reduce((sum, payment) => sum + Number(payment.amount), 0))} received across {completedPayments.length} completed payment{completedPayments.length === 1 ? '' : 's'}.</p>}
             </>}
           </section>

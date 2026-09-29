@@ -269,6 +269,10 @@ export function getPaymentHistory(params) {
   return request(`/payments/history${toQuery(params)}`)
 }
 
+export function deletePayment(id) {
+  return request(`/payments/${encodeURIComponent(id)}`, { method: 'DELETE' })
+}
+
 export function getBills(params) {
   return request(`/billing${toQuery(params)}`)
 }

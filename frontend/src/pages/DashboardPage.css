@@ -80,6 +80,16 @@
 .patient-management__form { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); }
 .patient-management__form textarea { min-height: 5.5rem; border: 1px solid var(--border); border-radius: var(--radius); padding: 0.7rem 0.85rem; font: inherit; resize: vertical; }
 .patient-management__wide { grid-column: 1 / -1; }
+.patient-management__records { grid-column: 1 / -1; min-width: 0; padding: 1.25rem; border: 1px solid var(--border); border-radius: var(--radius); background: var(--white); }
+.patient-management__record-form { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); margin-bottom: 1.25rem; }
+.patient-management__record-list { display: grid; gap: 0.65rem; }
+.patient-management__record { padding: 0.9rem 1rem; border: 1px solid var(--border); border-radius: 0.7rem; background: #fbfdfc; }
+.patient-management__record > div { display: flex; justify-content: space-between; gap: 0.75rem; flex-wrap: wrap; }
+.patient-management__record small { color: var(--text-light); }
+.patient-management__record p { margin: 0.45rem 0 0; color: var(--text-light); }
+.billing-page__payment-value { display: grid; justify-items: end; gap: 0.25rem; }
+.billing-page__delete-payment { border: 0; padding: 0.15rem 0; background: transparent; color: #9b2c2c; font: inherit; font-size: 0.78rem; cursor: pointer; text-decoration: underline; }
+.billing-page__delete-payment:disabled { cursor: wait; opacity: 0.65; }
 
 .department-management__layout { display: grid; grid-template-columns: minmax(280px, 0.9fr) minmax(0, 1.1fr); gap: 1.5rem; align-items: start; }
 .department-management__panel { padding: 1.25rem; border: 1px solid var(--border); border-radius: var(--radius); background: var(--white); }
@@ -422,6 +432,7 @@
 
   .staff-management__form { grid-template-columns: 1fr; }
   .patient-management__layout, .patient-management__form { grid-template-columns: 1fr; }
+  .patient-management__record-form { grid-template-columns: 1fr; }
   .department-management__layout, .department-management__form { grid-template-columns: 1fr; }
   .doctor-onboarding__form { grid-template-columns: 1fr; }
   .doctor-onboarding__fieldset { grid-template-columns: repeat(2, max-content); }

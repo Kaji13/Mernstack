@@ -43,6 +43,15 @@ const recordIdParam = z.object({
   params: z.object({ id: objectId }),
 })
 
+const medicalRecordUpdateSchema = z.object({
+  params: z.object({ id: objectId }),
+  body: z.object({
+    diagnosis: z.string().min(2).optional(),
+    notes: z.string().optional(),
+    prescriptions: z.array(z.string()).optional(),
+  }).strict(),
+})
+
 const billingSchema = z.object({
   body: z.object({
     patientId: objectId,
@@ -88,6 +97,7 @@ module.exports = {
   appointmentStatusSchema,
   medicalRecordSchema,
   recordIdParam,
+  medicalRecordUpdateSchema,
   billingSchema,
   billingIdParam,
   initiatePaymentSchema,

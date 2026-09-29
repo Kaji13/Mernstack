@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom'
 import Navbar from '../components/Navbar'
 import Footer from '../components/Footer'
 import BackToTop from '../components/BackToTop'
-import { createPatient, getPatients, updatePatient } from '../api'
+import { createMedicalRecord, createPatient, getMedicalRecords, getPatients, updatePatient } from '../api'
 import { getSession } from '../authStorage'
 import './DashboardPage.css'
 
@@ -34,10 +34,26 @@ function PatientManagementPage() {
   const [notice, setNotice] = useState('')
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
+  const [records, setRecords] = useState([])
+  const [recordForm, setRecordForm] = useState({ diagnosis: '', notes: '', prescriptions: '' })
+  const [recordsLoading, setRecordsLoading] = useState(false)
+  const [recordSaving, setRecordSaving] = useState(false)
+  const canCreateRecords = ['admin', 'editor', 'doctor'].includes(role)
 
   useEffect(() => {
     getPatients().then(setPatients).catch((err) => setError(err.message)).finally(() => setLoading(false))
   }, [])
+
+  useEffect(() => {
+    if (!selectedId) { setRecords([]); return }
+    let active = true
+    setRecordsLoading(true)
+    getMedicalRecords({ patientId: selectedId })
+      .then((items) => { if (active) setRecords(items) })
+      .catch((err) => { if (active) setError(err.message || 'Unable to load patient records.') })
+      .finally(() => { if (active) setRecordsLoading(false) })
+    return () => { active = false }
+  }, [selectedId])
 
   const visiblePatients = useMemo(() => {
     const normalized = query.trim().toLowerCase()
@@ -77,6 +93,27 @@ function PatientManagementPage() {
     }
   }
 
+  async function saveRecord(event) {
+    event.preventDefault()
+    if (!selectedId) return
+    setRecordSaving(true); setError(''); setNotice('')
+    try {
+      const saved = await createMedicalRecord({
+        patientId: selectedId,
+        diagnosis: recordForm.diagnosis,
+        notes: recordForm.notes,
+        prescriptions: recordForm.prescriptions.split('\n').map((item) => item.trim()).filter(Boolean),
+      })
+      setRecords((current) => [saved, ...current])
+      setRecordForm({ diagnosis: '', notes: '', prescriptions: '' })
+      setNotice('Clinical record saved.')
+    } catch (err) {
+      setError(err.message || 'Unable to save clinical record.')
+    } finally {
+      setRecordSaving(false)
+    }
+  }
+
   return <div className="dashboard-page"><Navbar /><main className="dashboard-page__main container">
     <div className="dashboard-page__head"><div><h1>Patient management</h1><p>{role === 'doctor' ? 'View and update the patients assigned to your care.' : 'Maintain patient contact and clinical profile information.'}</p></div><Link className="btn btn--outline" to={role === 'doctor' ? '/doctor' : '/dashboard'}>Back to dashboard</Link></div>
     {error && <p className="auth-page__error" role="alert">{error}</p>}
@@ -105,6 +142,16 @@ function PatientManagementPage() {
           <button className="btn btn--primary" disabled={saving}>{saving ? 'Saving…' : selectedId ? 'Save changes' : 'Create patient'}</button>
         </form>}
       </section>
+      {selectedId && <section className="patient-management__records">
+        <div className="dashboard-page__section-head"><h2>Clinical records · {form.fullName}</h2><p>Visit notes and care plans for this patient.</p></div>
+        {canCreateRecords && <form className="auth-page__form patient-management__record-form" onSubmit={saveRecord}>
+          <label>Diagnosis<input required minLength="2" value={recordForm.diagnosis} onChange={(event) => setRecordForm((current) => ({ ...current, diagnosis: event.target.value }))} /></label>
+          <label>Notes<textarea value={recordForm.notes} onChange={(event) => setRecordForm((current) => ({ ...current, notes: event.target.value }))} /></label>
+          <label>Prescriptions (one per line)<textarea value={recordForm.prescriptions} onChange={(event) => setRecordForm((current) => ({ ...current, prescriptions: event.target.value }))} /></label>
+          <button className="btn btn--primary" disabled={recordSaving}>{recordSaving ? 'Saving…' : 'Add clinical record'}</button>
+        </form>}
+        {recordsLoading ? <p className="dashboard-page__note">Loading clinical records…</p> : records.length ? <div className="patient-management__record-list">{records.map((record) => <article className="patient-management__record" key={record._id || record.id}><div><strong>{record.diagnosis}</strong><small>{new Date(record.createdAt).toLocaleDateString()}{record.doctorId?.name ? ` · ${record.doctorId.name}` : ''}</small></div>{record.notes && <p>{record.notes}</p>}{record.prescriptions?.length > 0 && <p><strong>Prescriptions:</strong> {record.prescriptions.join(', ')}</p>}</article>)}</div> : <p className="dashboard-page__note">No clinical records for this patient yet.</p>}
+      </section>}
     </div>
   </main><BackToTop /><Footer /></div>
 }

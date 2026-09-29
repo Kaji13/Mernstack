@@ -223,6 +223,22 @@ async function markPaid(payment) {
   }
 }
 
+async function removeFailedPayment(id) {
+  const payment = await Payment.findById(id)
+  if (!payment) {
+    const error = new Error('Payment not found')
+    error.status = 404
+    throw error
+  }
+  if (payment.status !== 'failed') {
+    const error = new Error('Only failed payment attempts can be deleted')
+    error.status = 409
+    throw error
+  }
+  await payment.deleteOne()
+  return { message: 'Failed payment attempt deleted' }
+}
+
 module.exports = {
   initiateForAppointment,
   initiateForBilling,
@@ -230,5 +246,6 @@ module.exports = {
   initiateEsewaForBilling,
   verifyByPidx,
   verifyEsewaByTransactionUuid,
+  removeFailedPayment,
   assertProviderConfigured,
 }

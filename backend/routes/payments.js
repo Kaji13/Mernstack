@@ -1,7 +1,7 @@
 const express = require('express')
 const { authenticate, authorize } = require('../middleware/auth')
 const { validate } = require('../middleware/validate')
-const { initiatePaymentSchema, verifyPaymentSchema, verifyEsewaPaymentSchema } = require('../validators/clinical')
+const { initiatePaymentSchema, verifyPaymentSchema, verifyEsewaPaymentSchema, billingIdParam } = require('../validators/clinical')
 const paymentService = require('../services/paymentService')
 const Appointment = require('../models/Appointment')
 const Billing = require('../models/Billing')
@@ -86,7 +86,15 @@ router.get('/history', authenticate, async (req, res, next) => {
     if (req.user.role === 'patient') {
       const Patient = require('../models/Patient')
       const patient = await Patient.findOne({ userId: req.user._id }).lean()
-      filter.patientId = patient?._id || null
+      if (!patient) return res.json({ payments: [], summary: { total: 0, completedAmount: 0, completed: 0, pending: 0, failed: 0, initiated: 0 } })
+      filter.patientId = patient._id
+    } else if (req.user.role === 'doctor') {
+      const Doctor = require('../models/Doctor')
+      const doctor = await Doctor.findOne({ userId: req.user._id }).select('slug').lean()
+      const patientIds = doctor
+        ? await Appointment.distinct('patientId', { doctorSlug: doctor.slug, patientId: { $ne: null } })
+        : []
+      filter.patientId = { $in: patientIds }
     }
     const payments = await Payment.find(filter).sort({ createdAt: -1 }).limit(500).lean()
     const summary = payments.reduce((result, payment) => {
@@ -104,12 +112,21 @@ router.get('/history', authenticate, async (req, res, next) => {
   } catch (error) { next(error) }
 })
 
+router.delete('/:id', authenticate, authorize('admin'), validate(billingIdParam), async (req, res, next) => {
+  try {
+    res.json(await paymentService.removeFailedPayment(req.params.id))
+  } catch (error) {
+    next(error)
+  }
+})
+
 router.post('/khalti/initiate', authenticate, validate(initiatePaymentSchema), async (req, res, next) => {
   try {
     const { appointmentId, billingId, returnUrl } = req.body
     if (appointmentId) {
       const appointment = await Appointment.findById(appointmentId)
       if (!appointment) return res.status(404).json({ message: 'Appointment not found' })
+      await paymentAccess(req.user, { appointment })
       const payment = await paymentService.initiateForAppointment(appointment, returnUrl)
       return res.json({ payment, khaltiConfigured: Boolean(process.env.KHALTI_SECRET_KEY) })
     }
