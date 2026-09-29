@@ -28,7 +28,7 @@ router.post('/', authorize('admin', 'editor', 'doctor'), validate(billingSchema)
 
 router.get('/:id', validate(billingIdParam), async (req, res, next) => {
   try {
-    const bill = await billingService.getBill(req.params.id)
+    const bill = await billingService.getBill(req.params.id, req.user)
     res.json(bill)
   } catch (error) {
     next(error)
@@ -48,7 +48,8 @@ router.get('/:id/invoice', validate(billingIdParam), async (req, res, next) => {
 
 router.get('/:id/receipt', validate(billingIdParam), async (req, res, next) => {
   try {
-    const { payments } = await billingService.getInvoice(req.params.id, req.user)
+    const invoice = await billingService.getInvoice(req.params.id, req.user)
+    const { payments } = invoice
     const payment = payments.find((item) => item.status === 'completed')
     if (!payment) return res.status(404).json({ message: 'No completed payment receipt found' })
     res.json({ invoiceNo: invoice.bill.invoiceNo, payment })
@@ -66,7 +67,7 @@ router.patch('/:id', authorize('admin', 'editor'), validate(billingIdParam), asy
 
 router.post('/:id/pay', validate(billingIdParam), async (req, res, next) => {
   try {
-    const result = await billingService.payBill(req.params.id, req.body.returnUrl)
+    const result = await billingService.payBill(req.params.id, req.body.returnUrl, req.user)
     res.json(result)
   } catch (error) {
     next(error)

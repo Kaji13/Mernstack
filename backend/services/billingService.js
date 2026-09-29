@@ -20,6 +20,15 @@ async function listBills(query = {}, actor) {
     if (!patient) return []
     where.patientId = patient._id
   }
+  if (actor?.role === 'doctor') {
+    const Doctor = require('../models/Doctor')
+    const Appointment = require('../models/Appointment')
+    const profile = await Doctor.findOne({ userId: actor._id }).select('slug').lean()
+    const patientIds = profile
+      ? await Appointment.distinct('patientId', { doctorSlug: profile.slug, patientId: { $ne: null } })
+      : []
+    where.patientId = { $in: patientIds }
+  }
   return prisma.billing.findMany(where, { sort: { createdAt: -1 }, populate: 'patientId' })
 }
 
@@ -38,12 +47,28 @@ async function createBill(data) {
   })
 }
 
-async function getBill(id) {
+async function getBill(id, actor) {
   const bill = await Billing.findById(id).populate('patientId')
   if (!bill) {
     const error = new Error('Invoice not found')
     error.status = 404
     throw error
+  }
+  if (actor?.role === 'patient' && String(bill.patientId?.userId) !== String(actor._id)) {
+    const error = new Error('You do not have access to this invoice')
+    error.status = 403
+    throw error
+  }
+  if (actor?.role === 'doctor') {
+    const Doctor = require('../models/Doctor')
+    const Appointment = require('../models/Appointment')
+    const profile = await Doctor.findOne({ userId: actor._id }).select('slug').lean()
+    const allowed = profile && await Appointment.exists({ doctorSlug: profile.slug, patientId: bill.patientId?._id })
+    if (!allowed) {
+      const error = new Error('You do not have access to this invoice')
+      error.status = 403
+      throw error
+    }
   }
   return bill
 }
@@ -59,8 +84,8 @@ async function updateBill(id, data) {
   return bill
 }
 
-async function payBill(id, returnUrl) {
-  const bill = await getBill(id)
+async function payBill(id, returnUrl, actor) {
+  const bill = await getBill(id, actor)
   const payment = await paymentService.initiateForBilling(bill, returnUrl)
   return { bill, payment }
 }
@@ -70,12 +95,7 @@ function escapeHtml(value = '') {
 }
 
 async function getInvoice(id, actor) {
-  const bill = await getBill(id)
-  if (actor?.role === 'patient' && String(bill.patientId?.userId) !== String(actor._id)) {
-    const error = new Error('You do not have access to this invoice')
-    error.status = 403
-    throw error
-  }
+  const bill = await getBill(id, actor)
   const Payment = require('../models/Payment')
   const payments = await Payment.find({ billingId: bill._id }).sort({ createdAt: -1 }).lean()
   return { bill, payments }

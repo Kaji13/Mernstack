@@ -15,6 +15,8 @@ function DashboardPage() {
   const [error, setError] = useState('')
   const [appointments, setAppointments] = useState([])
   const [updatingId, setUpdatingId] = useState('')
+  const [appointmentFilter, setAppointmentFilter] = useState('pending')
+  const [appointmentQuery, setAppointmentQuery] = useState('')
   const canManageAppointments = ['admin', 'editor', 'doctor'].includes(session?.user?.role)
 
   useEffect(() => {
@@ -45,6 +47,15 @@ function DashboardPage() {
       setUpdatingId('')
     }
   }
+
+  const visibleAppointments = appointments.filter((appointment) => {
+    const matchesStatus = appointmentFilter === 'all' || appointment.status === appointmentFilter
+    const query = appointmentQuery.trim().toLowerCase()
+    const matchesQuery = !query || [appointment.name, appointment.email, appointment.phone, appointment.department, appointment.doctorName]
+      .some((value) => String(value || '').toLowerCase().includes(query))
+    return matchesStatus && matchesQuery
+  })
+  const pendingAppointments = appointments.filter((item) => item.status === 'pending').length
 
   if (!session?.token) return null
 
@@ -103,18 +114,26 @@ function DashboardPage() {
             <div className="dashboard-page__section-head">
               <div>
                 <h2 id="appointment-requests-title">Appointment requests</h2>
-                <p>Confirm a pending request after checking availability.</p>
+                <p>{pendingAppointments ? `${pendingAppointments} request${pendingAppointments === 1 ? '' : 's'} need review.` : 'Your appointment queue is up to date.'}</p>
+              </div>
+            </div>
+            <div className="appointment-tools">
+              <label><span className="sr-only">Search appointment requests</span><input value={appointmentQuery} onChange={(event) => setAppointmentQuery(event.target.value)} placeholder="Search patient, doctor, or department" /></label>
+              <div className="appointment-filters" role="group" aria-label="Filter appointments">
+                {['pending', 'confirmed', 'cancelled', 'all'].map((status) => <button key={status} type="button" className={appointmentFilter === status ? 'appointment-filter appointment-filter--active' : 'appointment-filter'} onClick={() => setAppointmentFilter(status)}>{status[0].toUpperCase() + status.slice(1)} <span>{status === 'all' ? appointments.length : appointments.filter((item) => item.status === status).length}</span></button>)}
               </div>
             </div>
             {appointments.length === 0 ? (
               <p className="dashboard-page__note">No appointment requests yet.</p>
+            ) : visibleAppointments.length === 0 ? (
+              <p className="dashboard-page__note">No appointments match this view.</p>
             ) : (
               <div className="dashboard-page__appointment-list">
-                {appointments.map((appointment) => (
+                {visibleAppointments.map((appointment) => (
                   <article className="dashboard-page__appointment" key={appointment._id}>
                     <div>
                       <strong>{appointment.name}</strong>
-                      <p>{appointment.department} · {new Date(appointment.date).toLocaleDateString()}</p>
+                      <p>{appointment.doctorName ? `${appointment.doctorName} · ` : ''}{appointment.department} · {new Date(appointment.date).toLocaleDateString()}{appointment.timeSlot ? ` · ${appointment.timeSlot}` : ''}</p>
                       <p>{appointment.email} · {appointment.phone}</p>
                       {appointment.message && <p>{appointment.message}</p>}
                     </div>

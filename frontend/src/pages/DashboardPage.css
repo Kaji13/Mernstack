@@ -152,6 +152,14 @@
   flex-wrap: wrap;
 }
 
+.appointment-tools { display: flex; align-items: center; justify-content: space-between; gap: 0.75rem; flex-wrap: wrap; margin: 0.75rem 0 1rem; }
+.appointment-tools > label { flex: 1 1 240px; }
+.appointment-tools input { width: 100%; border: 1px solid var(--border); border-radius: 0.6rem; padding: 0.65rem 0.75rem; background: var(--white); color: var(--text); font: inherit; }
+.appointment-filters { display: flex; gap: 0.25rem; overflow-x: auto; }
+.appointment-filter { display: inline-flex; align-items: center; gap: 0.4rem; padding: 0.4rem 0.65rem; border: 1px solid transparent; border-radius: 999px; background: transparent; color: var(--text-light); font: inherit; font-size: 0.82rem; cursor: pointer; }
+.appointment-filter span { font-size: 0.75rem; }
+.appointment-filter--active { border-color: var(--border); background: var(--white); color: var(--primary-dark); font-weight: 700; }
+
 .dashboard-page__status {
   border-radius: 999px;
   padding: 0.3rem 0.65rem;
@@ -187,7 +195,8 @@
 .notification-filter span { font-size: 0.78rem; }
 .notification-filter--active { border-color: var(--border); background: var(--white); color: var(--primary-dark); font-weight: 700; }
 .notification-toolbar__live { display: inline-flex; align-items: center; gap: 0.4rem; margin-left: auto; color: var(--text-light); font-size: 0.8rem; }
-.notification-toolbar__live i { width: 0.45rem; height: 0.45rem; border-radius: 50%; background: #35a66f; }
+.notification-toolbar__live i { width: 0.45rem; height: 0.45rem; border-radius: 50%; background: #d18b19; }
+.notification-toolbar__live--connected i { background: #35a66f; }
 .notification-empty { display: grid; justify-items: center; padding: 3rem 1rem; border: 1px dashed var(--border); border-radius: var(--radius); text-align: center; color: var(--text-light); }
 .notification-empty > span { display: grid; width: 3rem; height: 3rem; place-items: center; border-radius: 50%; background: #e8f5f3; color: var(--primary-dark); font-size: 1.4rem; }
 .notification-empty h2 { margin: 0.8rem 0 0; color: var(--primary-dark); font-size: 1.15rem; }
@@ -228,6 +237,7 @@
 .billing-page__status--paid, .billing-page__status--completed { background: #ecfdf3; color: #1c6b38; }
 .billing-page__status--failed, .billing-page__status--void { background: #fff0f0; color: #9b2c2c; }
 .billing-page__detail-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 1rem; }
+.billing-page__detail-actions { display: flex; align-items: center; gap: 0.6rem; flex-wrap: wrap; justify-content: flex-end; }
 .billing-page__detail-head h2 { margin-top: 0.2rem; }
 .billing-page__detail-head p { margin: 0.3rem 0 0; color: var(--text-light); }
 .billing-page__patient-meta { display: flex; justify-content: space-between; gap: 0.75rem; margin: 1rem 0; padding-bottom: 0.8rem; border-bottom: 1px solid var(--border); color: var(--text-light); font-size: 0.85rem; }
@@ -415,4 +425,14 @@
   .department-management__layout, .department-management__form { grid-template-columns: 1fr; }
   .doctor-onboarding__form { grid-template-columns: 1fr; }
   .doctor-onboarding__fieldset { grid-template-columns: repeat(2, max-content); }
+}
+
+@media print {
+  body * { visibility: hidden; }
+  .billing-page__detail, .billing-page__detail * { visibility: visible; }
+  .billing-page__detail { position: absolute; inset: 0; width: 100%; padding: 0; border: 0; box-shadow: none; background: #fff; }
+  .billing-page__payment, .billing-page__payments, .billing-page__paid-note, .billing-page__print { display: none !important; }
+  .billing-page__table-wrap { overflow: visible; }
+  .billing-page__table tr, .billing-page__totals { break-inside: avoid; }
+  @page { margin: 18mm; }
 }

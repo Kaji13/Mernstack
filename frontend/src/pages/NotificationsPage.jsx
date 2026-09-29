@@ -20,6 +20,7 @@ function NotificationsPage() {
   const [updatingAll, setUpdatingAll] = useState(false)
   const [pendingIds, setPendingIds] = useState(() => new Set())
   const [filter, setFilter] = useState('all')
+  const [liveConnected, setLiveConnected] = useState(false)
   const socketUrl = useMemo(() => import.meta.env.VITE_SOCKET_URL || window.location.origin, [])
 
   useEffect(() => {
@@ -34,6 +35,9 @@ function NotificationsPage() {
       auth: { token: session.accessToken || session.token },
       transports: ['websocket', 'polling'],
     })
+    socket.on('connect', () => setLiveConnected(true))
+    socket.on('disconnect', () => setLiveConnected(false))
+    socket.on('connect_error', () => setLiveConnected(false))
     socket.on('notification:new', (notification) => {
       setNotifications((current) => {
         if (current.some((item) => idOf(item) === idOf(notification))) return current
@@ -105,7 +109,7 @@ function NotificationsPage() {
         <div className="notification-toolbar" role="group" aria-label="Filter notifications">
           <button type="button" className={filter === 'all' ? 'notification-filter notification-filter--active' : 'notification-filter'} onClick={() => setFilter('all')}>All <span>{notifications.length}</span></button>
           <button type="button" className={filter === 'unread' ? 'notification-filter notification-filter--active' : 'notification-filter'} onClick={() => setFilter('unread')}>Unread <span>{unreadCount}</span></button>
-          <span className="notification-toolbar__live"><i /> Live updates</span>
+          <span className={`notification-toolbar__live ${liveConnected ? 'notification-toolbar__live--connected' : ''}`} role="status"><i /> {liveConnected ? 'Live updates connected' : 'Live updates reconnecting'}</span>
         </div>
         {error && <p className="auth-page__error" role="alert">{error}</p>}
         {loading ? <p className="dashboard-page__note">Loading notifications…</p> : visibleNotifications.length === 0 ? (

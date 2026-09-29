@@ -116,6 +116,7 @@ router.post('/khalti/initiate', authenticate, validate(initiatePaymentSchema), a
     if (billingId) {
       const billing = await Billing.findById(billingId)
       if (!billing) return res.status(404).json({ message: 'Invoice not found' })
+      await paymentAccess(req.user, { billing })
       const payment = await paymentService.initiateForBilling(billing, returnUrl)
       return res.json({ payment, khaltiConfigured: Boolean(process.env.KHALTI_SECRET_KEY) })
     }
