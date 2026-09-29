@@ -1,10 +1,10 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { io } from 'socket.io-client'
 import Navbar from '../components/Navbar'
 import Footer from '../components/Footer'
 import BackToTop from '../components/BackToTop'
-import { getNotifications, markAllNotificationsRead, markNotificationRead } from '../api'
+import { getNotifications, markAllNotificationsRead, markNotificationRead, SOCKET_URL } from '../api'
 import { getSession } from '../authStorage'
 import './DashboardPage.css'
 
@@ -21,7 +21,6 @@ function NotificationsPage() {
   const [pendingIds, setPendingIds] = useState(() => new Set())
   const [filter, setFilter] = useState('all')
   const [liveConnected, setLiveConnected] = useState(false)
-  const socketUrl = useMemo(() => import.meta.env.VITE_SOCKET_URL || window.location.origin, [])
 
   useEffect(() => {
     let mounted = true
@@ -31,7 +30,7 @@ function NotificationsPage() {
       .finally(() => { if (mounted) setLoading(false) })
 
     if (!session?.token) return () => { mounted = false }
-    const socket = io(socketUrl, {
+    const socket = io(SOCKET_URL, {
       auth: { token: session.accessToken || session.token },
       transports: ['websocket', 'polling'],
     })
@@ -45,7 +44,7 @@ function NotificationsPage() {
       })
     })
     return () => { mounted = false; socket.disconnect() }
-  }, [session?.token, session?.accessToken, socketUrl])
+  }, [session?.token, session?.accessToken])
 
   async function readNotification(notification) {
     if (notification.readAt || pendingIds.has(idOf(notification))) return

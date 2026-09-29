@@ -1,6 +1,14 @@
 import { clearSession, getSession, saveSession } from './authStorage'
 
-const API_BASE = import.meta.env.VITE_API_URL || '/api'
+function normalizeApiBase(value) {
+  const base = String(value || '').trim().replace(/\/+$/, '')
+  if (!base) return '/api'
+  return /\/api$/i.test(base) ? base : `${base}/api`
+}
+
+export const API_BASE = normalizeApiBase(import.meta.env.VITE_API_URL)
+export const SOCKET_URL = import.meta.env.VITE_SOCKET_URL?.trim()
+  || (API_BASE.startsWith('/') ? window.location.origin : API_BASE.replace(/\/api$/i, ''))
 
 function authHeaders() {
   const session = getSession()

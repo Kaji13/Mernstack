@@ -1,8 +1,8 @@
-import { useEffect, useMemo, useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import Navbar from '../components/Navbar'
 import Footer from '../components/Footer'
 import BackToTop from '../components/BackToTop'
-import { getChatContacts, getChatConversations, getChatMessages, sendChatMessage } from '../api'
+import { getChatContacts, getChatConversations, getChatMessages, sendChatMessage, SOCKET_URL } from '../api'
 import { getSession } from '../authStorage'
 import { io } from 'socket.io-client'
 import { useNavigate } from 'react-router-dom'
@@ -28,8 +28,6 @@ function ChatPage() {
   const contactsRef = useRef([])
   const activeConversationRef = useRef('')
 
-  const socketUrl = useMemo(() => import.meta.env.VITE_SOCKET_URL || window.location.origin, [])
-
   useEffect(() => { contactsRef.current = contacts }, [contacts])
 
   useEffect(() => {
@@ -45,7 +43,7 @@ function ChatPage() {
       .catch((err) => setError(err.message))
       .finally(() => setLoading(false))
 
-    const socket = io(socketUrl, {
+    const socket = io(SOCKET_URL, {
       auth: { token: session.accessToken || session.token },
       transports: ['websocket', 'polling'],
     })

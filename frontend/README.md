@@ -1,5 +1,13 @@
 # React + Vite
 
+## Production API configuration
+
+Vite embeds frontend environment variables at build time. Set `VITE_API_URL` in the frontend hosting provider to the deployed backend origin (for example, `https://api.example.com`). The client adds `/api` automatically, so a value that already ends in `/api` also works. Rebuild and redeploy the frontend after changing it.
+
+Realtime chat and notifications use the same backend origin by default. Set `VITE_SOCKET_URL` only if Socket.IO is hosted at a different origin. Configure the backend `CLIENT_URL` to the frontend's deployed origin so API and socket requests are accepted.
+
+See `.env.production.example` for the expected variables.
+
 This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
 
 Currently, two official plugins are available:
